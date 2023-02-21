@@ -33,3 +33,9 @@
 5. For testing locally, create a file called `BOT_TOKEN.txt`, and paste the bot token into there. 
 
     If hosting on Heroku, then go to the app's `Settings > Config Vars`. Add one with the key `"IMAGE_BOT_TOKEN"`, and put the bot token into the value.
+
+6. To run the bot locally, run
+    ```
+    python3 main.py
+    ```
+    and `Ctrl+C` to stop.
