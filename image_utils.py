@@ -5,28 +5,34 @@ import os
 import urllib.request
 
 img_dir = "imgs"
-
 def is_img_file(url):
-    img_formats = ("image/png", "image/jpeg", "image/gif")
     try:
         site = urllib.request.urlopen(url)
         meta = site.info()
-        if meta["content-type"] in img_formats:
+        if "image/" in meta["content-type"]:
             return True
         return False
     except ValueError:
         raise discord.ext.commands.BadArgument("Invalid URL")
 
 def download_img(url):
-    if not os.path.exists(img_dir):
-        os.mkdir(img_dir)
     if not is_img_file(url):
         raise discord.ext.commands.BadArgument("Invalid URL")
-    try:
-        filename = os.path.join(img_dir, os.path.basename(url))
-        urllib.request.urlretrieve(url, filename)
-    except (ValueError, IsADirectoryError) as e:
-        raise discord.ext.commands.BadArgument("Invalid URL")
+
+    if not os.path.exists(img_dir):
+        os.mkdir(img_dir)
+    filename = os.path.join(img_dir, os.path.basename(url))
+    #create an image extension if one wasn't specified in the URL
+    __, ext = os.path.splitext(filename)
+    if not ext:
+        site = urllib.request.urlopen(url)
+        meta = site.info()
+        ext = meta["content-type"].split('/')[-1]
+        filename = f"{filename}.{ext}"
+
+    #download the image
+    urllib.request.urlretrieve(url, filename)
+    return filename
 
 
 async def send_img(ctx, img_path):
