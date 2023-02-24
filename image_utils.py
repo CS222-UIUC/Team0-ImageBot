@@ -1,10 +1,12 @@
 import discord
+from discord.ext.commands import BadArgument
 
 import re
 import os
 import urllib.request
 
 img_dir = "imgs"
+
 def is_img_file(url):
     try:
         site = urllib.request.urlopen(url)
@@ -13,11 +15,11 @@ def is_img_file(url):
             return True
         return False
     except ValueError:
-        raise discord.ext.commands.BadArgument("Invalid URL")
+        raise BadArgument("Invalid URL")
 
 def download_img(url):
     if not is_img_file(url):
-        raise discord.ext.commands.BadArgument("Invalid URL")
+        raise BadArgument("Invalid URL: not an image")
 
     if not os.path.exists(img_dir):
         os.mkdir(img_dir)
@@ -36,12 +38,9 @@ def download_img(url):
 
 
 async def send_img(ctx, img_path):
-    try:
-        with open(img_path, "rb") as img:
-            f = discord.File(img, filename = os.path.basename(img_path))
-            await ctx.send(file = f)
-    except IsADirectoryError:
-        raise discord.ext.commands.BadArgument("Invalid URL")
+    with open(img_path, "rb") as img:
+        f = discord.File(img, filename = os.path.basename(img_path))
+        await ctx.send(file = f)
 
 def delete_img(img_path):
     if os.path.exists(img_path):

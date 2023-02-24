@@ -12,18 +12,13 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='$', intents = intents)
 
 @bot.event
-async def setup_hook():
-    await bot.tree.sync(guild = discord.Object(id = 1072586003094712370))
-
-@bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-
-@bot.hybrid_command(name="test_image", description="This is a test")
+@bot.command(name="test_image", description="Test that the bot can download images and send them back")
 async def test_image(ctx, url):
     img_path = image_utils.download_img(url)
-    
+
     await image_utils.send_img(ctx, img_path)
     image_utils.delete_img(img_path)
 
@@ -48,5 +43,4 @@ if __name__ == "__main__":
             BOT_TOKEN = token_file.read()
     else:
         raise RuntimeError("Could not find token")
-
     bot.run(BOT_TOKEN)
