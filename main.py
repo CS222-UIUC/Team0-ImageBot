@@ -23,8 +23,11 @@ async def on_ready():
 @bot.hybrid_command(name="test_image", description="This is a test")
 async def test_image(ctx, url):
     image_utils.download_img(url)
-    await image_utils.send_img(ctx, f"imgs/{os.path.basename(url)}")
-    
+
+    img_name = os.path.basename(url)
+    img_path = os.path.join("imgs/", img_name)
+    await image_utils.send_img(ctx, img_path)
+    image_utils.delete_img(img_path)
 
 @test_image.error
 async def image_error_handler(ctx, error):

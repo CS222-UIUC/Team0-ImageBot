@@ -1,13 +1,27 @@
 import discord
 
+import re
 import os
 import urllib.request
 
 img_dir = "imgs"
 
+def is_img_file(url):
+    img_formats = ("image/png", "image/jpeg", "image/gif")
+    try:
+        site = urllib.request.urlopen(url)
+        meta = site.info()
+        if meta["content-type"] in img_formats:
+            return True
+        return False
+    except ValueError:
+        raise discord.ext.commands.BadArgument("Invalid URL")
+
 def download_img(url):
     if not os.path.exists(img_dir):
         os.mkdir(img_dir)
+    if not is_img_file(url):
+        raise discord.ext.commands.BadArgument("Invalid URL")
     try:
         filename = os.path.join(img_dir, os.path.basename(url))
         urllib.request.urlretrieve(url, filename)
