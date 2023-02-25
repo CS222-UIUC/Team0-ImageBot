@@ -43,4 +43,7 @@ if __name__ == "__main__":
             BOT_TOKEN = token_file.read()
     else:
         raise RuntimeError("Could not find token")
+
+    image_utils.spoof_human()
+    
     bot.run(BOT_TOKEN)
