@@ -23,3 +23,7 @@ Send these commands to the bot to test image link processing
 6. Image with no extension in the URL
     * `$test_image https://avatars.githubusercontent.com/u/1024025?v=4`
     * A picture of Linus Torvalds
+
+7. Image that requires a user-agent to be set
+    * `$test_image https://cdn.discordapp.com/attachments/882807640080674866/1072234438144037094/20230206_141622.jpg`
+    * A stack of crewmate action figures (should not be a 403 error)
