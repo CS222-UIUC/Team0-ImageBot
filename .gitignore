@@ -2,3 +2,4 @@ bot-env/
 __pycache__/
 imgs/
 BOT_TOKEN.txt
+utils/__pycache__/

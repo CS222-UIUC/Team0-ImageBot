@@ -5,6 +5,7 @@ from discord import app_commands
 import os
 
 import image_utils
+from utils import scaling
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,6 +22,29 @@ async def test_image(ctx, url):
 
     await image_utils.send_img(ctx, img_path)
     image_utils.delete_img(img_path)
+
+@bot.command(name="scale", description="scale image by factor or by width and height")
+async def scale_image(ctx, *args):
+    length = len(args)
+    if length == 2:
+        factor = float(args[0])
+        url = args[1]
+    elif length == 3:
+        width = int(args[0])
+        height = int(args[1])
+        url = args[2]
+    else:
+        await ctx.send("Usage: $scale [factor] [url], or $scale [width] [height] [url].")
+        return
+    img_path = image_utils.download_img(url)
+    if length == 2:
+        scaling.image_scaling_by_factor(img_path, factor)
+    else:
+        scaling.image_scaling_by_width_and_height(img_path, width, height)
+    await image_utils.send_img(ctx, img_path)
+    image_utils.delete_img(img_path)
+        
+    
 
 @test_image.error
 async def image_error_handler(ctx, error):
