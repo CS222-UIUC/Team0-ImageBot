@@ -1,25 +1,37 @@
 import discord
+from discord.ext import commands
+from discord import app_commands
 
 import os
+
+import image_utils
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='$', intents = intents)
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f'We have logged in as {bot.user}')
 
-@client.event
-async def on_message(message):
-    #necessary so the bot doesn't respond to itself
-    if message.author == client.user:
-        return
+@bot.command(name="test_image", description="Test that the bot can download images and send them back")
+async def test_image(ctx, url):
+    img_path = image_utils.download_img(url)
 
-    #can generally create 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+    await image_utils.send_img(ctx, img_path)
+    image_utils.delete_img(img_path)
+
+@test_image.error
+async def image_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please send a URL linking to your image")
+    elif isinstance(error, commands.TooManyArguments):
+        await ctx.send("Too many arguments!")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("URL was invalid, make sure to copy the image link")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
 
 if __name__ == "__main__":
     #heroku - get token from environment variable
@@ -32,4 +44,6 @@ if __name__ == "__main__":
     else:
         raise RuntimeError("Could not find token")
 
-    client.run(BOT_TOKEN)
+    image_utils.spoof_human()
+    
+    bot.run(BOT_TOKEN)
