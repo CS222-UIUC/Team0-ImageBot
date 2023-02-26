@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+from fractions import Fraction
 
 import os
 
@@ -27,14 +28,22 @@ async def test_image(ctx, url):
 async def scale_image(ctx, *args):
     length = len(args)
     if length == 2:
-        factor = float(args[0])
+        try:
+            factor = float(Fraction(args[0]))
+        except ValueError:
+            await ctx.send("Factor is not a real number. Usage: $scale [factor] [url]")
+            return
         url = args[1]
     elif length == 3:
-        width = int(args[0])
-        height = int(args[1])
+        try:
+            width = int(args[0])
+            height = int(args[1])
+        except ValueError:
+            await ctx.send("Width and height are integers. Usage: $scale [width] [height] [url]")
+            return
         url = args[2]
     else:
-        await ctx.send("Usage: $scale [factor] [url], or $scale [width] [height] [url].")
+        await ctx.send("Usage: $scale [factor] [url], or $scale [width] [height] [url]")
         return
     img_path = image_utils.download_img(url)
     if length == 2:
