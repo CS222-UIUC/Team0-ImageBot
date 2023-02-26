@@ -64,7 +64,7 @@ async def scale_image(ctx, *args):
     try:
         await image_utils.send_img(ctx, img_path)
     except discord.HTTPException:
-        await ctx.send("Scaled image exceeds file limit. Please choose a smaller factor or smaller width and height")
+        await ctx.send("Scaled image exceeds file size limit. Please choose a smaller factor or smaller width and height")
     image_utils.delete_img(img_path)
 
 if __name__ == "__main__":
