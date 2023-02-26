@@ -24,6 +24,17 @@ async def test_image(ctx, url):
     await image_utils.send_img(ctx, img_path)
     image_utils.delete_img(img_path)
 
+@test_image.error
+async def image_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please send a URL linking to your image")
+    elif isinstance(error, commands.TooManyArguments):
+        await ctx.send("Too many arguments!")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("URL was invalid, make sure to copy the image link")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
 @bot.command(name="scale", description="scale image by factor or by width and height")
 async def scale_image(ctx, *args):
     length = len(args)
@@ -50,21 +61,11 @@ async def scale_image(ctx, *args):
         scaling.image_scaling_by_factor(img_path, factor)
     else:
         scaling.image_scaling_by_width_and_height(img_path, width, height)
-    await image_utils.send_img(ctx, img_path)
+    try:
+        await image_utils.send_img(ctx, img_path)
+    except discord.HTTPException:
+        await ctx.send("Scaled image exceeds file limit. Please choose a smaller factor or smaller width and height")
     image_utils.delete_img(img_path)
-        
-    
-
-@test_image.error
-async def image_error_handler(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please send a URL linking to your image")
-    elif isinstance(error, commands.TooManyArguments):
-        await ctx.send("Too many arguments!")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("URL was invalid, make sure to copy the image link")
-    else:
-        await ctx.send(f"Something unexpected happened: {error}")
 
 if __name__ == "__main__":
     #heroku - get token from environment variable
