@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from fractions import Fraction
 
 import os
 
@@ -35,37 +34,47 @@ async def image_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
-@bot.command(name="scale", description="scale image by factor or by width and height")
-async def scale_image(ctx, *args):
-    length = len(args)
-    if length == 2:
-        try:
-            factor = float(Fraction(args[0]))
-        except ValueError:
-            await ctx.send("Factor is not a real number. Usage: $scale [factor] [url]")
-            return
-        url = args[1]
-    elif length == 3:
-        try:
-            width = int(args[0])
-            height = int(args[1])
-        except ValueError:
-            await ctx.send("Width and height are integers. Usage: $scale [width] [height] [url]")
-            return
-        url = args[2]
-    else:
-        await ctx.send("Usage: $scale [factor] [url], or $scale [width] [height] [url]")
-        return
+@bot.command(name="scale", description="scale image by factor")
+async def scale_image(ctx, factor, url):
     img_path = image_utils.download_img(url)
-    if length == 2:
-        scaling.image_scaling_by_factor(img_path, factor)
-    else:
-        scaling.image_scaling_by_width_and_height(img_path, width, height)
-    try:
-        await image_utils.send_img(ctx, img_path)
-    except discord.HTTPException:
-        await ctx.send("Scaled image exceeds file size limit. Please choose a smaller factor or smaller width and height")
+    display = scaling.image_scaling(img_path, factor)
+    if not display:
+        await ctx.send("To see the image, please copy the link and open it in a browser")
+    await image_utils.send_img(ctx, img_path)
     image_utils.delete_img(img_path)
+
+@scale_image.error
+async def scale_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        await ctx.send("Usage: $scale [factor] [url]")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Factor needs to be a real positive number")
+    elif isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Scaled image exceeds file size limit. Please choose a smaller factor")
+    elif isinstance(error, commands.UserInputError):
+        await ctx.send("Width and height of scaled image are close to 0. Please choose a larger factor")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
+@bot.command(name="resize", description="resize image by width and height")
+async def resize_image(ctx, width, height, url):
+    img_path = image_utils.download_img(url)
+    display = scaling.image_resizing(img_path, width, height)
+    if not display:
+        await ctx.send("To see the image, please copy the link and open it in a browser")
+    await image_utils.send_img(ctx, img_path)
+    image_utils.delete_img(img_path)
+
+@resize_image.error
+async def resize_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        await ctx.send("Usage: $resize [width] [height] [url]")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Width and Height need to be positive integers less than or equal to 65500")
+    elif isinstance(error, commands.CommandInvokeError):
+        await ctx.send("Scaled image exceeds file size limit. Please choose smaller width and height")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
 
 if __name__ == "__main__":
     #heroku - get token from environment variable
