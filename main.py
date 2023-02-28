@@ -44,7 +44,7 @@ async def scale_image(ctx, factor, url):
     display = scaling.image_scaling(img_path, factor)
     if not display:
         await ctx.send("To see the image, please copy the link and open it in a browser")
-    await image_utils.send_img(ctx, img_path)
+    await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
 
 @scale_image.error
@@ -53,10 +53,8 @@ async def scale_error_handler(ctx, error):
         await ctx.send("Usage: $scale [factor] [url]")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Factor needs to be a real positive number")
-    elif isinstance(error, commands.CommandInvokeError):
-        await ctx.send("Scaled image exceeds file size limit. Please choose a smaller factor")
     elif isinstance(error, commands.UserInputError):
-        await ctx.send("Width and height of scaled image are close to 0. Please choose a larger factor")
+        await ctx.send("Factor is either too small or too big. Please choose an appropriate factor")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
@@ -66,7 +64,7 @@ async def resize_image(ctx, width, height, url):
     display = scaling.image_resizing(img_path, width, height)
     if not display:
         await ctx.send("To see the image, please copy the link and open it in a browser")
-    await image_utils.send_img(ctx, img_path)
+    await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
 
 @resize_image.error
@@ -75,8 +73,8 @@ async def resize_error_handler(ctx, error):
         await ctx.send("Usage: $resize [width] [height] [url]")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Width and Height need to be positive integers less than or equal to 65500")
-    elif isinstance(error, commands.CommandInvokeError):
-        await ctx.send("Scaled image exceeds file size limit. Please choose smaller width and height")
+    elif isinstance(error, commands.UserInputError):
+        await ctx.send("Resized image exceeds file size limit. Please choose smaller width and height")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 

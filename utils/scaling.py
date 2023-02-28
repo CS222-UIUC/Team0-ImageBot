@@ -1,7 +1,6 @@
 from PIL import ImageOps, Image
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
-from discord.ext.commands import CommandInvokeError
 from fractions import Fraction
 import os
 
@@ -19,12 +18,13 @@ def image_scaling(image, factor):
     if factor <= 0:
         image_utils.delete_img(image)
         raise BadArgument
+    size = os.stat(image).st_size
+    new_size = size
     if factor > 1:
-        size = os.stat(image).st_size
         new_size = size * factor**2
         if new_size > file_size_limit:
             image_utils.delete_img(image)
-            raise CommandInvokeError
+            raise UserInputError
     display = True
     if new_size > display_file_size_limit:
         display = False
@@ -32,6 +32,7 @@ def image_scaling(image, factor):
     try:
         output = ImageOps.scale(im, factor)
     except ValueError:
+        im.close()
         image_utils.delete_img(image)
         raise UserInputError
     output.save(image)
@@ -50,13 +51,15 @@ def image_resizing(image, width, height):
     im = Image.open(image)
     old_width = im.width
     old_height = im.height
+    size = os.stat(image).st_size
+    new_size = size
     if width > old_width or height > old_height:
-        size = os.stat(image).st_size
         factor = width * height / (old_width * old_height)
         new_size = size * factor
         if new_size > file_size_limit:
+            im.close()
             image_utils.delete_img(image)
-            raise CommandInvokeError
+            raise UserInputError
     display = True
     if new_size > display_file_size_limit:
         display = False
