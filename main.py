@@ -26,14 +26,6 @@ async def test_image(ctx, url):
     image_utils.delete_img(img_path)
 
 
-@bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
-async def grayscale(ctx, url):
-    img_path = image_utils.download_img(url)
-    img = cv2.imread(img_path, 0)
-    await image_utils.send_img_by_mat(ctx, img, "grayscale.jpg")
-    image_utils.delete_img(img_path)
-
-
 @test_image.error
 async def image_error_handler(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -42,6 +34,23 @@ async def image_error_handler(ctx, error):
         await ctx.send("Too many arguments!")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("URL was invalid, make sure to copy the image link")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
+
+@bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
+async def grayscale(ctx, url):
+
+    img_path = image_utils.download_img(url)
+    img = cv2.imread(img_path, 0)
+    await image_utils.send_img_by_mat(ctx, img, "grayscale.jpg")
+    image_utils.delete_img(img_path)
+
+
+@grayscale.error
+async def grayscale_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please send a URL linking to your image")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
