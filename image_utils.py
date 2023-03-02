@@ -18,6 +18,14 @@ def spoof_human():
         ('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
     urllib.request.install_opener(opener)
 
+"""
+Applies func to the image at a url
+"""
+async def process_url(ctx, url, func, **kwargs):
+    img_path = download_img(url)
+    await func(img_path, **kwargs)
+    await send_img_by_path(ctx, img_path)
+    delete_img(img_path)
 
 """
 Checks if a URL leads to an image file

@@ -22,20 +22,14 @@ async def process_command(ctx, func, *args, **kwargs):
     if len(args) == 0:
         attachments = ctx.message.attachments
         for img in attachments:
-            await process_url(ctx, img.url, func, **kwargs)
+            await image_utils.process_url(ctx, img.url, func, **kwargs)
     elif len(args) == 1:
-        await process_url(ctx, args[0], func, **kwargs)
+        await image_utils.process_url(ctx, args[0], func, **kwargs)
     else:
         await ctx.send(("Please send a valid image or URL.\n"
                         "Usage:\n"
                         "\ttest_image [image_url]\n"
                         "\ttest_image (and attach an image"))
-
-async def process_url(ctx, url, func, **kwargs):
-    img_path = image_utils.download_img(url)
-    await func(img_path, **kwargs)
-    await image_utils.send_img_by_path(ctx, img_path)
-    image_utils.delete_img(img_path)
 
 async def test_image_fun(img_path, **kwargs):
     return
