@@ -18,14 +18,27 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-
-@bot.command(name="test_image", description="Test that the bot can download images and send them back")
-async def test_image(ctx, url):
+async def process_url(ctx, url):
     img_path = image_utils.download_img(url)
-
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
 
+@bot.command(name="test_image", description="Test that the bot can download images and send them back")
+async def test_image(ctx, *args):
+    if len(args) == 1:
+        url = args[0]
+        await process_url(ctx, url)
+
+    elif len(args) == 0:
+        attachments = ctx.message.attachments
+        for img in attachments:
+            await process_url(ctx, img.url)
+
+    else:
+        await ctx.send(("Please send a valid image or URL.\n"
+                        "Usage:\n"
+                        "\ttest_image [image_url]\n"
+                        "\ttest_image (and attach an image"))
 
 @test_image.error
 async def image_error_handler(ctx, error):
