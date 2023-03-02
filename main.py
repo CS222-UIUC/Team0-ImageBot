@@ -69,13 +69,12 @@ async def scale_error_handler(ctx, error):
         await ctx.send(f"Something unexpected happened: {error}")
 
 @bot.command(name="resize", description="resize image by width and height")
-async def resize_image(ctx, width, height, url):
-    img_path = image_utils.download_img(url)
-    display = scaling.image_resizing(img_path, width, height)
-    if not display:
-        await ctx.send("To see the image, please copy the link and open it in a browser")
-    await image_utils.send_img_by_path(ctx, img_path)
-    image_utils.delete_img(img_path)
+async def resize_image(ctx, width, height, *args):
+    async def resize_image_wrapper(img_path, width, height):
+        display = scaling.image_resizing(img_path, width, height)
+        if not display:
+            await ctx.send("To see the image, please copy the link and open it in a browser")
+    await process_command(ctx, resize_image_wrapper, *args, width=width, height=height)
 
 @resize_image.error
 async def resize_error_handler(ctx, error):
