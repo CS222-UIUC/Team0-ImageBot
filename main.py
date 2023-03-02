@@ -18,21 +18,25 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-async def process_url(ctx, url):
+async def process_url(ctx, url, func, **kwargs):
     img_path = image_utils.download_img(url)
+    func(img_path, **kwargs)
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
+
+def test_image_fun(img_path, **kwargs):
+    return
 
 @bot.command(name="test_image", description="Test that the bot can download images and send them back")
 async def test_image(ctx, *args):
     if len(args) == 1:
         url = args[0]
-        await process_url(ctx, url)
+        await process_url(ctx, url, test_image_fun)
 
     elif len(args) == 0:
         attachments = ctx.message.attachments
         for img in attachments:
-            await process_url(ctx, img.url)
+            await process_url(ctx, img.url, test_image_fun)
 
     else:
         await ctx.send(("Please send a valid image or URL.\n"

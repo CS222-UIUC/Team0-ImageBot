@@ -12,8 +12,6 @@ img_dir = "imgs"
 """
 Adds a user-agent to get around some 403 errors
 """
-
-
 def spoof_human():
     opener = urllib.request.build_opener()
     opener.addheaders = [
@@ -24,8 +22,6 @@ def spoof_human():
 """
 Checks if a URL leads to an image file
 """
-
-
 def is_img_file(url):
     try:
         site = urllib.request.urlopen(url)
@@ -40,8 +36,6 @@ def is_img_file(url):
 """
 Attempts to download image from URL
 """
-
-
 def download_img(url):
     if not is_img_file(url):
         raise BadArgument("Invalid URL: not an image")
@@ -65,8 +59,6 @@ def download_img(url):
 """
 Sends an image at the provided image path back to a user
 """
-
-
 async def send_img_by_path(ctx, img_path):
     with open(img_path, "rb") as img:
         f = discord.File(img, filename=os.path.basename(img_path))
@@ -75,8 +67,6 @@ async def send_img_by_path(ctx, img_path):
 """
 Sends an image using the provided OpenCV Mat image back to a user
 """
-
-
 async def send_img_by_mat(ctx, img, filename):
     is_success, buffer = cv2.imencode(".jpg", img)
 
@@ -90,8 +80,6 @@ async def send_img_by_mat(ctx, img, filename):
 """
 Deletes an image at a given path
 """
-
-
 def delete_img(img_path):
     if os.path.exists(img_path):
         os.remove(img_path)
