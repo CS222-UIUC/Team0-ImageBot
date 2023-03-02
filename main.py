@@ -6,6 +6,7 @@ import io
 import os
 
 import image_utils
+from utils import color
 from utils import scaling
 
 intents = discord.Intents.default()
@@ -88,11 +89,7 @@ async def resize_error_handler(ctx, error):
 
 @bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
 async def grayscale(ctx, *args):
-    async def grayscale_wrapper(img_path, name="grayscale.jpg"):
-        img = cv2.imread(img_path, 0)
-        cv2.imwrite(img_path, img)
-    await process_command(ctx, grayscale_wrapper, *args)
-
+    await process_command(ctx, color.grayscale, *args)
 
 @grayscale.error
 async def grayscale_error_handler(ctx, error):
