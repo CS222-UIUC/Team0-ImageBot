@@ -13,7 +13,6 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='$', intents=intents)
 
-
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
@@ -88,12 +87,11 @@ async def resize_error_handler(ctx, error):
         await ctx.send(f"Something unexpected happened: {error}")
 
 @bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
-async def grayscale(ctx, url):
-
-    img_path = image_utils.download_img(url)
-    img = cv2.imread(img_path, 0)
-    await image_utils.send_img_by_mat(ctx, img, "grayscale.jpg")
-    image_utils.delete_img(img_path)
+async def grayscale(ctx, *args):
+    async def grayscale_wrapper(img_path, name="grayscale.jpg"):
+        img = cv2.imread(img_path, 0)
+        cv2.imwrite(img_path, img)
+    await process_command(ctx, grayscale_wrapper, *args)
 
 
 @grayscale.error

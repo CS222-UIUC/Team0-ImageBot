@@ -1,11 +1,12 @@
 import discord
 from discord.ext.commands import BadArgument
 
-import re
-import os
-import urllib.request
 import cv2
 import io
+import os
+import urllib.request
+
+from enum import Enum
 
 img_dir = "imgs"
 
@@ -14,8 +15,7 @@ Adds a user-agent to get around some 403 errors
 """
 def spoof_human():
     opener = urllib.request.build_opener()
-    opener.addheaders = [
-        ('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+    opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
     urllib.request.install_opener(opener)
 
 """
