@@ -19,5 +19,4 @@ class ColorCog(commands.Cog):
             await ctx.send(f"Something unexpected happened: {error}")
 
 async def setup(bot):
-    print("Set up")
     await bot.add_cog(ColorCog(bot))
