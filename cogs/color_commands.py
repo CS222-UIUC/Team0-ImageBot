@@ -11,15 +11,13 @@ class ColorCog(commands.Cog):
     async def grayscale(self, ctx, *args):
         await process_command(ctx, color.grayscale, *args)
 
-    """
     @grayscale.error
     async def grayscale_error_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send("Please send a URL linking to your image")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
-    """
-    
+
 async def setup(bot):
     print("Set up")
     await bot.add_cog(ColorCog(bot))

@@ -30,7 +30,6 @@ Parameters:
     kwargs: the keyword arguments needed to run func
 """
 async def process_command(ctx, func, *args, **kwargs):
-    print(args)
     if len(args) == 0:
         attachments = ctx.message.attachments
         if len(attachments) == 0:
@@ -54,15 +53,9 @@ Applies func to the image at a url
 """
 async def process_url(ctx, url, func, **kwargs):
     img_path = download_img(url)
-    print(f"Image downloaded at {img_path}")
-    print(func)
-    print(kwargs)
     await func(img_path, **kwargs)
-    print(f"Image modified")
     await send_img_by_path(ctx, img_path)
-    print(f"Image sent")
     delete_img(img_path)
-    print(f"Image deleted")
 
 """
 Checks if a URL leads to an image file
