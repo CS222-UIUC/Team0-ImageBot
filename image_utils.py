@@ -10,6 +10,7 @@ from enum import Enum
 
 img_dir = "imgs"
 
+
 """
 Adds a user-agent to get around some 403 errors
 """
@@ -19,13 +20,49 @@ def spoof_human():
     urllib.request.install_opener(opener)
 
 """
+Wrapper function for generally processing commands
+
+Parameters:
+    ctx: the message context
+    func: function to be applied to the image.
+        - Takes in an img_path and the keyword arguments
+    args: the URL if it exists
+    kwargs: the keyword arguments needed to run func
+"""
+async def process_command(ctx, func, *args, **kwargs):
+    print(args)
+    if len(args) == 0:
+        attachments = ctx.message.attachments
+        if len(attachments) == 0:
+            await ctx.send(("Please send a valid image or URL.\n"
+                        "Usage:\n"
+                        "\ttest_image [image_url]\n"
+                        "\ttest_image (and attach an image"))
+        for img in attachments:
+            await process_url(ctx, img.url, func, **kwargs)
+    elif len(args) == 1:
+        url = args[0]
+        await process_url(ctx, url, func, **kwargs)
+    else:
+        await ctx.send(("Please send a valid image or URL.\n"
+                        "Usage:\n"
+                        "\ttest_image [image_url]\n"
+                        "\ttest_image (and attach an image"))
+
+"""
 Applies func to the image at a url
 """
 async def process_url(ctx, url, func, **kwargs):
     img_path = download_img(url)
+    print(f"Image downloaded at {img_path}")
+    print(func)
+    print(kwargs)
     await func(img_path, **kwargs)
+    print(f"Image modified")
     await send_img_by_path(ctx, img_path)
+    print(f"Image sent")
     delete_img(img_path)
+    print(f"Image deleted")
 
 """
 Checks if a URL leads to an image file
@@ -61,7 +98,7 @@ def download_img(url):
 
     # download the image
     urllib.request.urlretrieve(url, filename)
-    return filename
+    return os.path.abspath(filename)
 
 
 """

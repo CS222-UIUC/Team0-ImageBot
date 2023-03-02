@@ -1,11 +1,11 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import cv2
-import io
+import asyncio
 import os
 
-import image_utils
+import discord
+from discord.ext import commands
+
+from image_utils import process_command, spoof_human
+from cogs.color_commands import ColorCog
 from utils import color
 from utils import scaling
 
@@ -18,25 +18,15 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-async def process_command(ctx, func, *args, **kwargs):
-    if len(args) == 0:
-        attachments = ctx.message.attachments
-        for img in attachments:
-            await image_utils.process_url(ctx, img.url, func, **kwargs)
-    elif len(args) == 1:
-        await image_utils.process_url(ctx, args[0], func, **kwargs)
-    else:
-        await ctx.send(("Please send a valid image or URL.\n"
-                        "Usage:\n"
-                        "\ttest_image [image_url]\n"
-                        "\ttest_image (and attach an image"))
-
-async def test_image_fun(img_path, **kwargs):
+"""
+Basic func example, does nothing to the image
+"""
+async def test_image_fun(img_path):
     return
 
 @bot.command(name="test_image", description="Test that the bot can download images and send them back")
-async def test_image(ctx, *args, **kwargs):
-    await process_command(ctx, test_image_fun, *args, **kwargs)
+async def test_image(ctx, *args):
+    await process_command(ctx, test_image_fun, *args)
 
 @test_image.error
 async def image_error_handler(ctx, error):
@@ -87,6 +77,7 @@ async def resize_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+"""
 @bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
 async def grayscale(ctx, *args):
     await process_command(ctx, color.grayscale, *args)
@@ -97,6 +88,7 @@ async def grayscale_error_handler(ctx, error):
         await ctx.send("Please send a URL linking to your image")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
+"""
 
 if __name__ == "__main__":
     # heroku - get token from environment variable
@@ -109,6 +101,6 @@ if __name__ == "__main__":
     else:
         raise RuntimeError("Could not find token")
 
-    image_utils.spoof_human()
-
+    spoof_human()
+    asyncio.run(bot.load_extension("cogs.color_commands"))
     bot.run(BOT_TOKEN)
