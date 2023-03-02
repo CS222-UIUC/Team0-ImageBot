@@ -18,31 +18,31 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-async def process_url(ctx, url, func, **kwargs):
-    img_path = image_utils.download_img(url)
-    func(img_path, **kwargs)
-    await image_utils.send_img_by_path(ctx, img_path)
-    image_utils.delete_img(img_path)
-
-def test_image_fun(img_path, **kwargs):
-    return
-
-@bot.command(name="test_image", description="Test that the bot can download images and send them back")
-async def test_image(ctx, *args):
-    if len(args) == 1:
-        url = args[0]
-        await process_url(ctx, url, test_image_fun)
-
-    elif len(args) == 0:
+async def process_command(ctx, func, *args, **kwargs):
+    if len(args) == 0:
         attachments = ctx.message.attachments
         for img in attachments:
-            await process_url(ctx, img.url, test_image_fun)
-
+            await process_url(ctx, img.url, func, **kwargs)
+    elif len(args) == 1:
+        await process_url(ctx, args[0], func, **kwargs)
     else:
         await ctx.send(("Please send a valid image or URL.\n"
                         "Usage:\n"
                         "\ttest_image [image_url]\n"
                         "\ttest_image (and attach an image"))
+
+async def process_url(ctx, url, func, **kwargs):
+    img_path = image_utils.download_img(url)
+    await func(img_path, **kwargs)
+    await image_utils.send_img_by_path(ctx, img_path)
+    image_utils.delete_img(img_path)
+
+async def test_image_fun(img_path, **kwargs):
+    return
+
+@bot.command(name="test_image", description="Test that the bot can download images and send them back")
+async def test_image(ctx, *args, **kwargs):
+    await process_command(ctx, test_image_fun, *args, **kwargs)
 
 @test_image.error
 async def image_error_handler(ctx, error):
@@ -56,13 +56,12 @@ async def image_error_handler(ctx, error):
         await ctx.send(f"Something unexpected happened: {error}")
 
 @bot.command(name="scale", description="scale image by factor")
-async def scale_image(ctx, factor, url):
-    img_path = image_utils.download_img(url)
-    display = scaling.image_scaling(img_path, factor)
-    if not display:
-        await ctx.send("To see the image, please copy the link and open it in a browser")
-    await image_utils.send_img_by_path(ctx, img_path)
-    image_utils.delete_img(img_path)
+async def scale_image(ctx, factor, *args):
+    async def scaling_wrapper(img_path, factor):
+        display = scaling.image_scaling(img_path, factor)
+        if not display:
+            await ctx.send("To see the image, please copy the link and open it in a browser")
+    await process_command(ctx, scaling_wrapper, *args, factor=factor)
 
 @scale_image.error
 async def scale_error_handler(ctx, error):
