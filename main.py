@@ -7,6 +7,8 @@ import os
 
 import image_utils
 from utils import scaling
+from utils import rotation
+from utils import flip
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -75,6 +77,38 @@ async def resize_error_handler(ctx, error):
         await ctx.send("Width and Height need to be positive integers less than or equal to 65500")
     elif isinstance(error, commands.UserInputError):
         await ctx.send("Resized image exceeds file size limit. Please choose smaller width and height")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
+@bot.command(name="rotate", description="rotate image by degrees counterclockwise if positive, clockwise if negative")
+async def rotate_image(ctx, degree, url):
+    img_path = image_utils.download_img(url)
+    rotation.image_rotation(img_path, degree)
+    await image_utils.send_img_by_path(ctx, img_path)
+    image_utils.delete_img(img_path)
+
+@rotate_image.error
+async def rotate_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        await ctx.send("Usage: $rotate [degree] [url]. Positive degrees for rotation counterclockwise, and negative degrees clockwise")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Degree needs to be a real number")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
+@bot.command(name="flip", description="flip image left right or top bottom")
+async def flip_image(ctx, direction, url):
+    img_path = image_utils.download_img(url)
+    flip.image_flip(img_path, direction)
+    await image_utils.send_img_by_path(ctx, img_path)
+    image_utils.delete_img(img_path)
+
+@flip_image.error
+async def flip_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        await ctx.send("Usage: $flip [direction] [url]. Direction equals 0 for flipping left and right, and 1 for flipping up and down")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Direction takes either 0 or 1")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
