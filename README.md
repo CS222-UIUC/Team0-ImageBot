@@ -2,12 +2,14 @@
 
 # Table of Contents
 1. [Available Commands](#available-commands)
-    1. [Transformations](#transformations)
-    2. [Color Filters](#color-filters)
+    1. [Meta Commands](#meta-commands)
+    2. [Transformations](#transformations)
+    3. [Color Filters](#color-filters)
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
 All commands are prefixed with $.
+### Meta Commands
 1. `$help`
 Provides a list of commands and arguments
 ### Transformations
