@@ -44,10 +44,7 @@ async def process_command(ctx, func, *args, **kwargs):
         url = args[0]
         await process_url(ctx, url, func, **kwargs)
     else:
-        await ctx.send(("Please send a valid image or URL.\n"
-                        "Usage:\n"
-                        "\ttest_image [image_url]\n"
-                        "\ttest_image (and attach an image"))
+        await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
 
 """
 Applies func to the image at a url
