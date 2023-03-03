@@ -1,5 +1,30 @@
 ﻿# Team0-ImageBot
 
+# Table of Contents
+1. [Available Commands](#available-commands)
+    1. [Meta Commands](#meta-commands)
+    2. [Transformations](#transformations)
+    3. [Color Filters](#color-filters)
+2. [Development Environment Setup](#development-environment-setup)
+
+## Available Commands
+All commands are prefixed with $.
+### Meta Commands
+1. `$help`
+Provides a list of commands and arguments
+### Transformations
+1. `$scale [factor] [url]`
+Scales the provided image by the given amount. The factor must be positive. Additionally, neither height nor width of the resulting image can be greater than 65500 pixels.
+2. `resize [width] [height] [url]`
+Resizes the image to the given width and height. Likewise, neither height nor width of the resulting image can be greater than 65500 pixels.
+3. `$rotate [degree] [url]`
+Rotates the image by the given degrees counterclockwise. Negative values rotate clockwise
+4. `$flip [direction] [url]`
+If direction is 1, then the image is flipped vertically such that the top is at the bottom. If direction is 0, then the image is flipped horizontally.
+### Color Filters
+5. `$grayscale [url]`
+Returns a grayscale version of the given image.
+
 ## Development Environment Setup
 
 1. Install Python 3.8 or higher
