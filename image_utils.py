@@ -94,8 +94,8 @@ def download_img(url):
         img_path = f"{img_path}.{ext}"
 
     # download the image
-    urllib.request.urlretrieve(url, filename)
-    return os.path.abspath(filename)
+    urllib.request.urlretrieve(url, img_path)
+    return os.path.abspath(img_path)
 
 
 """
