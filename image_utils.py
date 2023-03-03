@@ -34,10 +34,7 @@ async def process_command(ctx, func, *args, **kwargs):
     if len(args) == 0:
         attachments = ctx.message.attachments
         if len(attachments) == 0:
-            await ctx.send(("Please send a valid image or URL.\n"
-                        "Usage:\n"
-                        "\ttest_image [image_url]\n"
-                        "\ttest_image (and attach an image"))
+            await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
         for img in attachments:
             await process_url(ctx, img.url, func, **kwargs)
     elif len(args) == 1:
