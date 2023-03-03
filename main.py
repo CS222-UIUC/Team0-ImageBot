@@ -86,7 +86,6 @@ async def grayscale(ctx, url):
     await image_utils.send_img_by_mat(ctx, img, "grayscale.jpg")
     image_utils.delete_img(img_path)
 
-
 @grayscale.error
 async def grayscale_error_handler(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):

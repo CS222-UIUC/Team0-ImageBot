@@ -7,7 +7,8 @@ import urllib.request
 import cv2
 import io
 
-img_dir = "imgs"
+IMG_DIR = "imgs"
+MAX_FILENAME_LEN = 128
 
 """
 Adds a user-agent to get around some 403 errors
@@ -40,26 +41,30 @@ def is_img_file(url):
 """
 Attempts to download image from URL
 """
-
-
 def download_img(url):
     if not is_img_file(url):
         raise BadArgument("Invalid URL: not an image")
 
-    if not os.path.exists(img_dir):
-        os.mkdir(img_dir)
-    filename = os.path.join(img_dir, os.path.basename(url))
+    if not os.path.exists(IMG_DIR):
+        os.mkdir(IMG_DIR)
+
+    filename = os.path.basename(url)
+    if len(filename) >= MAX_FILENAME_LEN:
+        filename = "img"
+    img_path = os.path.join(IMG_DIR, filename)
     # create an image extension if one wasn't specified in the URL
-    __, ext = os.path.splitext(filename)
+    __, ext = os.path.splitext(img_path)
     if not ext:
         site = urllib.request.urlopen(url)
         meta = site.info()
         ext = meta["content-type"].split('/')[-1]
-        filename = f"{filename}.{ext}"
+        if len(img_path) >= 128:
+            img_path = "img"
+        img_path = f"{img_path}.{ext}"
 
     # download the image
-    urllib.request.urlretrieve(url, filename)
-    return filename
+    urllib.request.urlretrieve(url, img_path)
+    return img_path
 
 
 """
