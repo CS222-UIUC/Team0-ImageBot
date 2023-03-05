@@ -9,7 +9,7 @@ import image_utils
 file_size_limit = 1 << 26 # 64 MB
 display_file_size_limit = 1 << 23 # 8 MB
 
-def image_scaling(image, factor):
+async def image_scaling(image, factor):
     try:
         factor = float(Fraction(factor))
     except ValueError:
@@ -38,7 +38,7 @@ def image_scaling(image, factor):
     output.save(image)
     return display
 
-def image_resizing(image, width, height):
+async def image_resizing(image, width, height):
     try:
         width = int(width)
         height = int(height)
@@ -66,3 +66,27 @@ def image_resizing(image, width, height):
     output = im.resize((width, height))
     output.save(image)
     return display
+
+async def image_rotation(image, degree):
+    try:
+        degree = float(degree)
+    except ValueError:
+        image_utils.delete_img(image)
+        raise BadArgument
+    degree = degree % 360
+    im = Image.open(image)
+    output = im.rotate(degree,expand=True)
+    output.save(image)
+
+async def image_flip(image, direction):
+    try:
+        direction = int(direction)
+    except ValueError:
+        image_utils.delete_img(image)
+        raise BadArgument
+    if direction != 0 and direction != 1:
+        image_utils.delete_img(image)
+        raise BadArgument
+    im = Image.open(image)
+    output = im.transpose(direction)
+    output.save(image)

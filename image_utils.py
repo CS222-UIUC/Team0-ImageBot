@@ -1,32 +1,60 @@
 import discord
 from discord.ext.commands import BadArgument
 
-import re
-import os
-import urllib.request
 import cv2
 import io
+import os
+import urllib.request
+
+from enum import Enum
 
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
 
+
 """
 Adds a user-agent to get around some 403 errors
 """
-
-
 def spoof_human():
     opener = urllib.request.build_opener()
-    opener.addheaders = [
-        ('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+    opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
     urllib.request.install_opener(opener)
 
+"""
+Wrapper function for generally processing commands
+
+Parameters:
+    ctx: the message context
+    func: function to be applied to the image.
+        - Takes in an img_path and the keyword arguments
+    args: the URL if it exists
+    kwargs: the keyword arguments needed to run func
+"""
+async def process_command(ctx, func, *args, **kwargs):
+    if len(args) == 0:
+        attachments = ctx.message.attachments
+        if len(attachments) == 0:
+            await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+        for img in attachments:
+            await process_url(ctx, img.url, func, **kwargs)
+    elif len(args) == 1:
+        url = args[0]
+        await process_url(ctx, url, func, **kwargs)
+    else:
+        await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+
+"""
+Applies func to the image at a url
+"""
+async def process_url(ctx, url, func, **kwargs):
+    img_path = download_img(url)
+    await func(img_path, **kwargs)
+    await send_img_by_path(ctx, img_path)
+    delete_img(img_path)
 
 """
 Checks if a URL leads to an image file
 """
-
-
 def is_img_file(url):
     try:
         site = urllib.request.urlopen(url)
@@ -64,14 +92,12 @@ def download_img(url):
 
     # download the image
     urllib.request.urlretrieve(url, img_path)
-    return img_path
+    return os.path.abspath(img_path)
 
 
 """
 Sends an image at the provided image path back to a user
 """
-
-
 async def send_img_by_path(ctx, img_path):
     with open(img_path, "rb") as img:
         f = discord.File(img, filename=os.path.basename(img_path))
@@ -80,8 +106,6 @@ async def send_img_by_path(ctx, img_path):
 """
 Sends an image using the provided OpenCV Mat image back to a user
 """
-
-
 async def send_img_by_mat(ctx, img, filename):
     is_success, buffer = cv2.imencode(".jpg", img)
 
@@ -95,8 +119,6 @@ async def send_img_by_mat(ctx, img, filename):
 """
 Deletes an image at a given path
 """
-
-
 def delete_img(img_path):
     if os.path.exists(img_path):
         os.remove(img_path)
