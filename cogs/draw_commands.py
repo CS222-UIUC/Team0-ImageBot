@@ -8,13 +8,17 @@ class DrawCog(commands.Cog):
         self.bot = bot
 
     @commands.command(name="line", description="Bot draws line on top of image from point A to B with a given thickness")
-    async def line(self, ctx, *args):
-        await process_command(ctx, draw.drawline, *args)
+    async def line(self, ctx, x1, y1, x2, y2, width, *args):
+        await process_command(ctx, draw.drawline, *args, start=(x1, y1), stop=(x2, y2), width=width)
 
-    @draw.error
+    @line.error
     async def draw_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Please send a URL linking to your image")
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send("Usage: $line [x1] [y1] [x2] [y2] [width] [url]")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Width must be a positive integer")
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send("Arguments must be integers")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 

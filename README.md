@@ -25,6 +25,10 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 5. `$grayscale [url]`
 Returns a grayscale version of the given image.
 
+### Image Drawing
+1. `$line [x1] [y1] [x2] [y2] [width] [url]`
+Draws a black line from point (x1, y1) to (x2, y2) with the given width. Arguments must be integers, and width must be positive.
+
 ## Development Environment Setup
 
 1. Install Python 3.8 or higher
