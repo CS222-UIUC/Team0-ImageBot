@@ -40,6 +40,7 @@ async def image_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+
 @bot.command(name="scale", description="scale image by factor")
 async def scale_image(ctx, factor, url):
     img_path = image_utils.download_img(url)
@@ -48,6 +49,7 @@ async def scale_image(ctx, factor, url):
         await ctx.send("To see the image, please copy the link and open it in a browser")
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
+
 
 @scale_image.error
 async def scale_error_handler(ctx, error):
@@ -60,6 +62,7 @@ async def scale_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+
 @bot.command(name="resize", description="resize image by width and height")
 async def resize_image(ctx, width, height, url):
     img_path = image_utils.download_img(url)
@@ -68,6 +71,7 @@ async def resize_image(ctx, width, height, url):
         await ctx.send("To see the image, please copy the link and open it in a browser")
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
+
 
 @resize_image.error
 async def resize_error_handler(ctx, error):
@@ -80,12 +84,14 @@ async def resize_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+
 @bot.command(name="rotate", description="rotate image by degrees counterclockwise if positive, clockwise if negative")
 async def rotate_image(ctx, degree, url):
     img_path = image_utils.download_img(url)
     rotation.image_rotation(img_path, degree)
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
+
 
 @rotate_image.error
 async def rotate_error_handler(ctx, error):
@@ -96,12 +102,14 @@ async def rotate_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+
 @bot.command(name="flip", description="flip image left right or top bottom")
 async def flip_image(ctx, direction, url):
     img_path = image_utils.download_img(url)
     flip.image_flip(img_path, direction)
     await image_utils.send_img_by_path(ctx, img_path)
     image_utils.delete_img(img_path)
+
 
 @flip_image.error
 async def flip_error_handler(ctx, error):
@@ -112,6 +120,7 @@ async def flip_error_handler(ctx, error):
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
+
 @bot.command(name="grayscale", description="Test that the bot can download images and send them back converted to grayscale")
 async def grayscale(ctx, url):
 
@@ -120,10 +129,47 @@ async def grayscale(ctx, url):
     await image_utils.send_img_by_mat(ctx, img, "grayscale.jpg")
     image_utils.delete_img(img_path)
 
+
 @grayscale.error
 async def grayscale_error_handler(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Please send a URL linking to your image")
+    else:
+        await ctx.send(f"Something unexpected happened: {error}")
+
+
+@bot.command(name="hue", description="Test that the bot can download images and send them back with adjusted hue")
+async def hue(ctx, change, url):
+    img_path = image_utils.download_img(url)
+    img = cv2.imread(img_path)
+
+    change = int(change)
+
+    if change < 0 or change > 180:
+        raise (commands.BadArgument("Hue change is between 0 and 180."))
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    h = hsv[:, :, 0]
+    s = hsv[:, :, 1]
+    v = hsv[:, :, 2]
+
+    huechange = change   # 0 is no change; 0<=huechange<=180
+    hnew = cv2.add(h, huechange)
+
+    hsvnew = cv2.merge([hnew, s, v])
+
+    result = cv2.cvtColor(hsvnew, cv2.COLOR_HSV2BGR)
+
+    await image_utils.send_img_by_mat(ctx, result, "hue.jpg")
+    image_utils.delete_img(img_path)
+
+
+@hue.error
+async def hue_error_handler(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        await ctx.send("Usage: $hue [change] [url]. Hue change is between 0 and 180.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Hue change is between 0 and 180.")
     else:
         await ctx.send(f"Something unexpected happened: {error}")
 
