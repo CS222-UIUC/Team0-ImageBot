@@ -7,9 +7,7 @@ class TransformationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    """
-    Scaling
-    """
+    """Scaling"""
     @commands.command(name="scale", description="scale image by factor")
     async def scale(self, ctx, factor, *args):
         async def scaling_wrapper(img_path, factor):
@@ -63,6 +61,7 @@ class TransformationCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
+    """Flip"""
     @commands.command(name="flip", description="flip image left right or top bottom")
     async def flip_image(self, ctx, direction, *args):
         await process_command(ctx, transformation.image_flip, *args, direction=direction)
@@ -76,5 +75,22 @@ class TransformationCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
+    """Compression"""
+    @commands.command(name="compress", description="compress image by a rate")
+    async def compress_image(self, ctx, rate, *args):
+        async def compress_image_wrapper(img_path, rate):
+            old_file_size, new_file_size = await transformation.image_compression(img_path, rate)
+            await ctx.send(f"Original file size is {old_file_size}, and compressed file size is {new_file_size}")
+        await process_command(ctx, compress_image_wrapper, *args, rate=rate)
+
+    @compress_image.error
+    async def compress_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send("Usage: $compress [rate] [url]. Rate is a real number between 0 and 1, inclusive")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Only images in .jpg can be compressed, and rate is a real number between 0 and 1, inclusive")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+
 async def setup(bot):
     await bot.add_cog(TransformationCog(bot))
