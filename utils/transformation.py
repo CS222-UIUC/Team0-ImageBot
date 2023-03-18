@@ -79,14 +79,10 @@ async def image_rotation(image, degree):
     output.save(image)
 
 async def image_flip(image, direction):
-    try:
-        direction = int(direction)
-    except ValueError:
+    if direction != '0' and direction != '1':
         image_utils.delete_img(image)
         raise BadArgument
-    if direction != 0 and direction != 1:
-        image_utils.delete_img(image)
-        raise BadArgument
+    direction = int(direction)
     im = Image.open(image)
     output = im.transpose(direction)
     output.save(image)
