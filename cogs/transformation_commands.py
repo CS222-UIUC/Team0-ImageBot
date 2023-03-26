@@ -1,7 +1,8 @@
 from discord.ext import commands
-from utils import transformation
+from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip
+from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
-from image_utils import process_command
+from image_utils import process_command, InvalidURL
 
 class TransformationCog(commands.Cog):
     def __init__(self, bot):
@@ -12,13 +13,16 @@ class TransformationCog(commands.Cog):
     """
     @commands.command(name="scale", description="scale image by factor")
     async def scale(self, ctx, factor, *args):
-        await process_command(ctx, transformation.ImageScaling(), *args, factor=factor, cntx=ctx)
+        await process_command(ctx, ImageScaling(), *args, factor=factor, cntx=ctx)
 
     @scale.error
     async def scale_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
-            await ctx.send("Usage: $scale [factor] [url]")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {ImageScaling().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+        elif isinstance(error, BadArgument):
             await ctx.send("Factor needs to be a real positive number")
         elif isinstance(error, commands.UserInputError):
             await ctx.send("Factor is either too small or too big. Please choose an appropriate factor")
@@ -28,13 +32,16 @@ class TransformationCog(commands.Cog):
     """Resizing"""
     @commands.command(name="resize", description="resize image by width and height")
     async def resize_image(self, ctx, width, height, *args):
-        await process_command(ctx, transformation.ImageResizing(), *args, width=width, height=height, cntx=ctx)
+        await process_command(ctx, ImageResizing(), *args, width=width, height=height, cntx=ctx)
 
     @resize_image.error
     async def resize_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
-            await ctx.send("Usage: $resize [width] [height] [url]")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {ImageResizing().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+        elif isinstance(error, BadArgument):
             await ctx.send("Width and Height need to be positive integers less than or equal to 65500")
         elif isinstance(error, commands.UserInputError):
             await ctx.send("Resized image exceeds file size limit. Please choose smaller width and height")
@@ -44,26 +51,32 @@ class TransformationCog(commands.Cog):
     """Rotation"""
     @commands.command(name="rotate", description="rotate image by degrees counterclockwise if positive, clockwise if negative")
     async def rotate_image(self, ctx, degree, *args):
-        await process_command(ctx, transformation.ImageRotation(), *args, degree=degree)
+        await process_command(ctx, ImageRotation(), *args, degree=degree)
 
     @rotate_image.error
     async def rotate_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
-            await ctx.send("Usage: $rotate [degree] [url]. Positive degrees for rotation counterclockwise, and negative degrees clockwise")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {ImageRotation().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+        elif isinstance(error, BadArgument):
             await ctx.send("Degree needs to be a real number")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
     @commands.command(name="flip", description="flip image left right or top bottom")
     async def flip_image(self, ctx, direction, *args):
-        await process_command(ctx, transformation.ImageFlip(), *args, direction=direction)
+        await process_command(ctx, ImageFlip(), *args, direction=direction)
 
     @flip_image.error
     async def flip_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
-            await ctx.send("Usage: $flip [direction] [url]. Direction equals 0 for flipping left and right, and 1 for flipping up and down")
-        elif isinstance(error, commands.BadArgument):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {ImageFlip().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+        elif isinstance(error, BadArgument):
             await ctx.send("Direction takes either 0 or 1")
         else:
             await ctx.send(f"Something unexpected happened: {error}")

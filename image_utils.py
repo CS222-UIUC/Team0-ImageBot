@@ -11,6 +11,8 @@ from command import Command
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
 
+class InvalidURL(Exception):
+    pass
 
 """
 Adds a user-agent to get around some 403 errors
@@ -63,7 +65,7 @@ def is_img_file(url):
             return True
         return False
     except ValueError:
-        raise BadArgument("Invalid URL")
+        raise InvalidURL("Invalid URL")
 
 
 """
@@ -71,7 +73,7 @@ Attempts to download image from URL
 """
 def download_img(url):
     if not is_img_file(url):
-        raise BadArgument("Invalid URL: not an image")
+        raise InvalidURL("Invalid URL: not an image")
 
     if not os.path.exists(IMG_DIR):
         os.mkdir(IMG_DIR)

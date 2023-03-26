@@ -50,7 +50,7 @@ class ImageScaling(Command):
 
 class ImageResizing(Command):
     def __init__(self):
-        super().__init__("$resize [width] [height] [image link/uploaded image]")
+        super().__init__("$resize [width] [height] [image link/uploaded image].\n\t-Width and height are in pixels")
     
     async def command(self, img_path, width, height, cntx):
         display = await self.image_resizing(img_path, width, height)
@@ -86,12 +86,11 @@ class ImageResizing(Command):
         output.save(image)
         return display
         
-
 class ImageRotation(Command):
     def __init__(self):
-        super().__init__("$rotate [degree] [image link/uploaded image]")
+        super().__init__("$rotate [degree] [image link/uploaded image].\n\t-degree: number specifying number of degrees counterclockwise to rotate")
 
-    async def image_rotation(self, img_path, degree):
+    async def command(self, img_path, degree):
         try:
             degree = float(degree)
         except ValueError:
@@ -104,7 +103,7 @@ class ImageRotation(Command):
 
 class ImageFlip(Command):
     def __init__(self):
-        super().__init__("$flip [direction (0 = left <-> right, 1 = up <-> down)] [image link/uploaded image]")
+        super().__init__("$flip [direction] [image link/uploaded image].\n\t-direction: 0 flips left to right, 1 flips up to down")
 
     async def command(self, img_path, direction):
         try:
