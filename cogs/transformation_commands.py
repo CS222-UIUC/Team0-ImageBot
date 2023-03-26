@@ -12,11 +12,7 @@ class TransformationCog(commands.Cog):
     """
     @commands.command(name="scale", description="scale image by factor")
     async def scale(self, ctx, factor, *args):
-        async def scaling_wrapper(img_path, factor):
-            display = await transformation.image_scaling(img_path, factor)
-            if not display:
-                await ctx.send("To see the image, please copy the link and open it in a browser")
-        await process_command(ctx, scaling_wrapper, *args, factor=factor)
+        await process_command(ctx, transformation.ImageScaling(), *args, factor=factor, cntx=ctx)
 
     @scale.error
     async def scale_error_handler(self, ctx, error):
@@ -32,11 +28,7 @@ class TransformationCog(commands.Cog):
     """Resizing"""
     @commands.command(name="resize", description="resize image by width and height")
     async def resize_image(self, ctx, width, height, *args):
-        async def resize_image_wrapper(img_path, width, height):
-            display = await transformation.image_resizing(img_path, width, height)
-            if not display:
-                await ctx.send("To see the image, please copy the link and open it in a browser")
-        await process_command(ctx, resize_image_wrapper, *args, width=width, height=height)
+        await process_command(ctx, transformation.ImageResizing(), *args, width=width, height=height, cntx=ctx)
 
     @resize_image.error
     async def resize_error_handler(self, ctx, error):
@@ -52,7 +44,7 @@ class TransformationCog(commands.Cog):
     """Rotation"""
     @commands.command(name="rotate", description="rotate image by degrees counterclockwise if positive, clockwise if negative")
     async def rotate_image(self, ctx, degree, *args):
-        await process_command(ctx, transformation.image_rotation, *args, degree=degree)
+        await process_command(ctx, transformation.ImageRotation(), *args, degree=degree)
 
     @rotate_image.error
     async def rotate_error_handler(self, ctx, error):
@@ -65,7 +57,7 @@ class TransformationCog(commands.Cog):
 
     @commands.command(name="flip", description="flip image left right or top bottom")
     async def flip_image(self, ctx, direction, *args):
-        await process_command(ctx, transformation.image_flip, *args, direction=direction)
+        await process_command(ctx, transformation.ImageFlip(), *args, direction=direction)
 
     @flip_image.error
     async def flip_error_handler(self, ctx, error):

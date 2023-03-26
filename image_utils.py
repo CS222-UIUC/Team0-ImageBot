@@ -6,7 +6,7 @@ import io
 import os
 import urllib.request
 
-from enum import Enum
+from command import Command
 
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
@@ -25,23 +25,23 @@ Wrapper function for generally processing commands
 
 Parameters:
     ctx: the message context
-    func: function to be applied to the image.
+    command (command.Command): function to be applied to the image.
         - Takes in an img_path and the keyword arguments
     args: the URL if it exists
     kwargs: the keyword arguments needed to run func
 """
-async def process_command(ctx, func, *args, **kwargs):
+async def process_command(ctx, command, *args, **kwargs):
     if len(args) == 0:
         attachments = ctx.message.attachments
         if len(attachments) == 0:
-            await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+            await ctx.send(f"Usage: {command.usage}")
         for img in attachments:
-            await process_url(ctx, img.url, func, **kwargs)
+            await process_url(ctx, img.url, command.command, **kwargs)
     elif len(args) == 1:
         url = args[0]
-        await process_url(ctx, url, func, **kwargs)
+        await process_url(ctx, url, command.command, **kwargs)
     else:
-        await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+        await ctx.send(f"Usage: {command.usage}")
 
 """
 Applies func to the image at a url
