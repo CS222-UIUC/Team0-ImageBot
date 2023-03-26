@@ -75,7 +75,7 @@ async def process_url(ctx, url, func, **kwargs):
         if (ctx.channel in last_used_image_dict):
             url = last_used_image_dict[ctx.channel]
         else:
-            await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+            await ctx.send(("Sorry, I couldn't find an image or an image link in your message, or a recently used image in this channel"))
             return
     img_path = download_img(url)
     
