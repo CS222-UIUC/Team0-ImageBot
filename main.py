@@ -26,7 +26,7 @@ async def echo(ctx, *args):
     await process_command(ctx, test_image_fun, *args)
 
 @echo.error
-async def image_error_handler(ctx, error):
+async def echo_error_handler(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Please send a URL linking to your image")
     elif isinstance(error, commands.TooManyArguments):

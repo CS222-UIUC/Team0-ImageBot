@@ -10,6 +10,7 @@ from enum import Enum
 
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
+ImageStatus = Enum('Image_Status_Enum', ['no_image', 'one_image', 'multiple_images'])
 
 """
 This dict keeps track of the last used image path for each channel
@@ -44,21 +45,21 @@ Parameters:
     kwargs: the keyword arguments needed to run func
 """
 async def process_command(ctx, func, *args, **kwargs):
-    image_attached = 0
+    image_attached = ImageStatus.no_image
     if (len(args) == 0):
         attachments = ctx.message.attachments
         if len(attachments) == 0:
             attachments = ctx.message.attachments
             if len(attachments) == 0:
-                image_attached = 0
+                image_attached = ImageStatus.no_image
             else:
-                image_attached = 2
+                image_attached = ImageStatus.multiple_images
     elif len(args) == 1:
-        image_attached = 1
+        image_attached = ImageStatus.one_image
     
-    if (image_attached == 0):
+    if (image_attached == ImageStatus.no_image):
         await process_url(ctx, 0, func, **kwargs)
-    elif (image_attached == 1):
+    elif (image_attached == ImageStatus.one_image):
         await process_url(ctx, args[0], func, **kwargs)
     else:
         for img in attachments:
