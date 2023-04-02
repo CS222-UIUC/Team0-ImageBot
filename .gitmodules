@@ -1,0 +1,3 @@
+[submodule "includes/Trident"]
+	path = includes/Trident
+	url = https://github.com/BrendanParmer/Trident
