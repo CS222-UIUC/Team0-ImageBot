@@ -1,6 +1,7 @@
 from discord.ext import commands
 from utils import transformation
 
+import image_utils
 from image_utils import process_command
 
 class TransformationCog(commands.Cog):
@@ -73,6 +74,34 @@ class TransformationCog(commands.Cog):
             await ctx.send("Usage: $flip [direction] [url]. Direction equals 0 for flipping left and right, and 1 for flipping up and down")
         elif isinstance(error, commands.BadArgument):
             await ctx.send("Direction takes either 0 or 1")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+    
+    @commands.command(name="create_gif", description="create a gif from input images")
+    async def create_gif(self, ctx, image_paths):
+        await transformation.gif_create(image_paths)
+        await image_utils.send_img_by_path(ctx, transformation.default_gif_path)
+        image_utils.delete_img(transformation.default_gif_path)
+
+    @create_gif.error
+    async def create_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send("Usage: $create_gif [\"image1_url image2_url...\"]")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Make sure all urls are valid and images url are separated by spaces and in double quotation")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+    
+    @commands.command(name="append_gif", description="append input images to a gif")
+    async def append_gif(self, ctx, image_paths, *args):
+        await process_command(ctx, transformation.image_flip, *args, image_paths=image_paths)
+
+    @append_gif.error
+    async def append_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send("Usage: $append_gif [\"image1_url image2_url...\"] [gif_url]")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Make sure all urls are valid and images url are separated by spaces and in double quotation")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
