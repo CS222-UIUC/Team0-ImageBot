@@ -10,7 +10,6 @@ from command import Command
 
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
-ImageStatus = Enum('Image_Status_Enum', ['no_image', 'one_image', 'multiple_images'])
 
 """
 This dict keeps track of the last used image path for each channel
@@ -48,8 +47,6 @@ Parameters:
 """
 
 async def process_command(ctx, command, *args, **kwargs):
-    image_attached = ImageStatus.no_image
-
     if len(args) == 0:
         #image not sent as link
         attachments = ctx.message.attachments
