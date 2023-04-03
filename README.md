@@ -8,10 +8,12 @@
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
-All commands are prefixed with $.
+All commands are prefixed with $. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
 ### Meta Commands
 1. `$help`
-Provides a list of commands and arguments
+Provides a list of commands and arguments.
+2. `$echo`
+The bot echos back an image unchanged.
 ### Transformations
 1. `$scale [factor] [url]`
 Scales the provided image by the given amount. The factor must be positive. Additionally, neither height nor width of the resulting image can be greater than 65500 pixels.
