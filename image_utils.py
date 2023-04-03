@@ -87,7 +87,7 @@ def is_img_file(url):
             return True
         return False
     except ValueError:
-        raise InvalidURL("Invalid URL")
+        raise InvalidURL(f"Invalid URL {url}: Could not open site")
 
 
 """
@@ -95,7 +95,7 @@ Attempts to download image from URL
 """
 def download_img(url):
     if not is_img_file(url):
-        raise InvalidURL("Invalid URL: not an image")
+        raise InvalidURL(f"Invalid URL {url}: not an image")
 
     if not os.path.exists(IMG_DIR):
         os.mkdir(IMG_DIR)
