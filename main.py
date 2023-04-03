@@ -21,12 +21,12 @@ Basic func example, does nothing to the image
 async def test_image_fun(img_path):
     return
 
-@bot.command(name="test_image", description="Test that the bot can download images and send them back")
-async def test_image(ctx, *args):
+@bot.command(name="echo", description="Echos back the image")
+async def echo(ctx, *args):
     await process_command(ctx, test_image_fun, *args)
 
-@test_image.error
-async def image_error_handler(ctx, error):
+@echo.error
+async def echo_error_handler(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Please send a URL linking to your image")
     elif isinstance(error, commands.TooManyArguments):

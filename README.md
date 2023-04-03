@@ -8,10 +8,12 @@
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
-All commands are prefixed with $.
+All commands are prefixed with $. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
 ### Meta Commands
 1. `$help`
-Provides a list of commands and arguments
+Provides a list of commands and arguments.
+2. `$echo`
+The bot echos back an image unchanged.
 ### Transformations
 1. `$scale [factor] [url]`
 Scales the provided image by the given amount. The factor must be positive. Additionally, neither height nor width of the resulting image can be greater than 65500 pixels.
@@ -21,9 +23,13 @@ Resizes the image to the given width and height. Likewise, neither height nor wi
 Rotates the image by the given degrees counterclockwise. Negative values rotate clockwise
 4. `$flip [direction] [url]`
 If direction is 1, then the image is flipped vertically such that the top is at the bottom. If direction is 0, then the image is flipped horizontally.
+5. `$edge_detect [url]`
+Converts the image to a black and white image, where edges detected in the original image are colored white.
 ### Color Filters
 5. `$grayscale [url]`
 Returns a grayscale version of the given image.
+
+
 
 ## Development Environment Setup
 

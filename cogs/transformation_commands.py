@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip
+from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
 from image_utils import process_command, InvalidURL
@@ -78,6 +78,17 @@ class TransformationCog(commands.Cog):
                 await ctx.send(error.__cause__)
         elif isinstance(error, BadArgument):
             await ctx.send("Direction takes either 0 or 1")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+    
+    @commands.command(name="edge_detect", description="Edge detection of image")
+    async def edge_detect_image(self, ctx, *args):
+        await process_command(ctx, EdgeDetect(), *args)
+
+    @edge_detect_image.error
+    async def edge_detect_error_handler(self, ctx, error):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {EdgeDetect().usage}")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     

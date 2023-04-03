@@ -1,4 +1,4 @@
-from PIL import ImageOps, Image
+from PIL import ImageOps, Image, ImageFilter
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -116,4 +116,18 @@ class ImageFlip(Command):
             raise BadArgument
         im = Image.open(img_path)
         output = im.transpose(direction)
+        output.save(img_path)
+
+class EdgeDetect(Command):
+    def __init__(self):
+        super().__init__("$edge_detect [image link/uploaded image]")
+        
+    async def command(self, img_path):
+        im = Image.open(img_path)
+        im = im.convert("L")
+        output = im.filter(ImageFilter.Kernel((5,5), (1, 1, 1, 1, 1,
+                                                    1, 1, 1, 1, 1,
+                                                    1, 1, -24, 1, 1,
+                                                    1, 1, 1, 1, 1,
+                                                    1, 1, 1, 1, 1), 1, 0))
         output.save(img_path)
