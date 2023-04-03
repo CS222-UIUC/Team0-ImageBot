@@ -26,8 +26,14 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 Returns a grayscale version of the given image.
 
 ### Image Drawing
-1. `$line [x1] [y1] [x2] [y2] [width] [url]`
-Draws a black line from point (x1, y1) to (x2, y2) with the given width. Arguments must be integers, and width must be positive.
+1. `$pick_color [r] [g] [b]`
+Picks the color to be used by future commands, given by the selected color channels, taking values between 0 and 255, inclusive. Note that values outside of this range with be taken modulo 256. It also sends back a swatch of the selected color.
+2. `$sample_color [num_colors] [url]`
+Picks the dominant color in the image to be used by future commands, given it is divided into the [num_colors] most dominant colors. This is accomplished using k-means clustering. It also sends back a swatch of the selected color.
+3. `$line [x1] [y1] [x2] [y2] [width] [url]`
+Draws a line from point (x1, y1) to (x2, y2) with the given width of the saved color. Arguments must be integers, and width must be positive. Note that the coordinates are given such that (0, 0) is in the top left corner
+4. `$rect [x1] [y1] [x2] [y2] [width] [url]`
+Draws a rectangle bounded by the points (x1, y1), (x2, y2) of the saved color.
 
 ## Development Environment Setup
 
