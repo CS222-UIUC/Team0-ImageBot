@@ -88,20 +88,20 @@ class TransformationCog(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
             await ctx.send("Usage: $create_gif [\"image1_url image2_url...\"]")
         elif isinstance(error, commands.BadArgument):
-            await ctx.send("Make sure all urls are valid and images url are separated by spaces and in double quotation")
+            await ctx.send("Make sure all urls are valid and image urls are separated by spaces and in double quotation")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
     @commands.command(name="append_gif", description="append input images to a gif")
     async def append_gif(self, ctx, image_paths, *args):
-        await process_command(ctx, transformation.image_flip, *args, image_paths=image_paths)
+        await process_command(ctx, transformation.gif_append_image, *args, image_paths=image_paths)
 
     @append_gif.error
     async def append_error_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
-            await ctx.send("Usage: $append_gif [\"image1_url image2_url...\"] [gif_url]")
+            await ctx.send("Usage: $append_gif [\"image1_url...\"] [gif_url]")
         elif isinstance(error, commands.BadArgument):
-            await ctx.send("Make sure all urls are valid and images url are separated by spaces and in double quotation")
+            await ctx.send("Make sure all urls are valid and image urls are separated by spaces and in double quotation")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     

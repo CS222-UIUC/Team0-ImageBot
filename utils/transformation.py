@@ -1,4 +1,4 @@
-from PIL import ImageOps, Image
+from PIL import ImageOps, Image, ImageSequence
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -8,7 +8,7 @@ import image_utils
 
 file_size_limit = 1 << 26 # 64 MB
 display_file_size_limit = 1 << 23 # 8 MB
-default_gif_path = f"{os.getcwd()}\imgs\default.gif"
+default_gif_path = "imgs\default.gif"
 
 async def image_scaling(image, factor):
     try:
@@ -96,15 +96,17 @@ def are_image_paths_valid(image_paths):
     image_paths = image_paths.split()
     is_valid = True
     index = 0
-    print(image_paths)
     for i in range(0, len(image_paths)):
         try:
-            image_utils.download_img(image_paths[i])
+            image_paths[i] = image_utils.download_img(image_paths[i])
+            filename, ext = os.path.splitext(image_paths[i])
+            new_image_path = f"{filename}{i}{ext}"
+            os.rename(image_paths[i], new_image_path)
+            image_paths[i] = new_image_path
         except BadArgument:
             index = i
             is_valid = False
             break
-    print(image_paths)
     if not is_valid:
         for i in range(0, index):
             image_utils.delete_img(image_paths[i])
@@ -120,7 +122,10 @@ async def gif_create(image_paths):
     if not is_valid or len(image_paths) == 1:
         raise BadArgument
     im = Image.open(image_paths[0])
-    im.save(default_gif_path, save_all=True, append_images=image_paths[1:])
+    images = []
+    for i in range(1, len(image_paths)):
+        images.append(Image.open(image_paths[i]))
+    im.save(default_gif_path, save_all=True, append_images=images, duration=500, loop=0)
     clear_all_images(image_paths)
 
     
@@ -129,7 +134,8 @@ async def gif_append_image(gif_path, image_paths):
     if not is_valid:
         raise BadArgument
     im = Image.open(gif_path)
-    print(im.format)
-    im.save(gif_path, save_all=True, append_images=image_paths)
+    images = [frame.copy() for frame in ImageSequence.Iterator(im)]
+    for i in range(0, len(image_paths)):
+        images.append(Image.open(image_paths[i]))
+    images[0].save(gif_path, save_all=True, append_images=images[1:], duration=500, loop=0)
     clear_all_images(image_paths)
-    
