@@ -48,7 +48,10 @@ Applies func to the image at a url
 """
 async def process_url(ctx, url, func, **kwargs):
     img_path = download_img(url)
-    await func(img_path, **kwargs)
+    res = await func(img_path, **kwargs)
+    if (res != None):
+        delete_img(img_path)
+        img_path = res
     await send_img_by_path(ctx, img_path)
     delete_img(img_path)
 

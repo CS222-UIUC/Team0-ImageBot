@@ -79,8 +79,9 @@ class TransformationCog(commands.Cog):
     @commands.command(name="compress", description="compress image by a rate")
     async def compress_image(self, ctx, rate, *args):
         async def compress_image_wrapper(img_path, rate):
-            old_file_size, new_file_size = await transformation.image_compression(img_path, rate)
+            old_file_size, new_file_size, new_file_name = await transformation.image_compression(img_path, rate)
             await ctx.send(f"Original file size is {old_file_size}, and compressed file size is {new_file_size}")
+            return new_file_name
         await process_command(ctx, compress_image_wrapper, *args, rate=rate)
 
     @compress_image.error
@@ -88,7 +89,7 @@ class TransformationCog(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
             await ctx.send("Usage: $compress [rate] [url]. Rate is a real number between 0 and 1, inclusive")
         elif isinstance(error, commands.BadArgument):
-            await ctx.send("Only images in .jpg can be compressed, and rate is a real number between 0 and 1, inclusive")
+            await ctx.send("Rate is a real number between 0 and 1, inclusive")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
