@@ -33,6 +33,8 @@ Returns a grayscale version of the given image.
 7. `$triangulate [points] [url]`
 Returns a triangulated version of an image.
     * `points` - integer in range [1, 16383) specifying how many samples from the image to take
+8. `$tri_animate [url]`
+Returns a gif with a triangulation effect.
 
 
 
