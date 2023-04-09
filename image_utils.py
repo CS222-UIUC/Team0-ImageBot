@@ -70,11 +70,11 @@ async def process_url(ctx, url, func, **kwargs):
         else:
             await ctx.send(("Sorry, I couldn't find an image or an image link in your message, or a recently used image in this channel"))
             return
-    img_path = download_img(url)
+    in_path = download_img(url)
     
-    await func(img_path, **kwargs)
-    await send_img_by_path(ctx, img_path)
-    delete_img(img_path)
+    out_path = await func(in_path, **kwargs)
+    await send_file_by_path(ctx, out_path)
+    delete_img(in_path)
 
 """
 Checks if a URL leads to an image file
@@ -122,7 +122,7 @@ def download_img(url):
 """
 Sends an image at the provided image path back to a user
 """
-async def send_img_by_path(ctx, img_path):
+async def send_file_by_path(ctx, img_path):
     with open(img_path, "rb") as img:
         f = discord.File(img, filename=os.path.basename(img_path))
         m = (await ctx.send(file=f))

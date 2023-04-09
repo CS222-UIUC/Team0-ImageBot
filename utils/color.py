@@ -9,3 +9,4 @@ class Grayscale(Command):
     async def command(self, img_path):
         img = cv2.imread(img_path, 0)
         cv2.imwrite(img_path, img)
+        return img_path

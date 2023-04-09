@@ -23,3 +23,4 @@ class Triangulate(Command):
             pyramid_reduce=True,
         )
         triangler_instance.convert_and_save(img_path, img_path)
+        return img_path

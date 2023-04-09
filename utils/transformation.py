@@ -18,6 +18,7 @@ class ImageScaling(Command):
         display = await self.image_scaling(img_path, factor)
         if not display:
             await cntx.send("To see the image, please copy the link and open it in a browser")
+        return img_path
 
     async def image_scaling(self, img_path, factor):
         try:
@@ -56,6 +57,7 @@ class ImageResizing(Command):
         display = await self.image_resizing(img_path, width, height)
         if not display:
             await cntx.send("To see the image, please copy the link and open it in a browser")
+        return img_path
 
     async def image_resizing(self, image, width, height):
         try:
@@ -100,6 +102,7 @@ class ImageRotation(Command):
         im = Image.open(img_path)
         output = im.rotate(degree,expand=True)
         output.save(img_path)
+        return img_path
 
 class ImageFlip(Command):
     def __init__(self):
@@ -117,6 +120,7 @@ class ImageFlip(Command):
         im = Image.open(img_path)
         output = im.transpose(direction)
         output.save(img_path)
+        return img_path
 
 class EdgeDetect(Command):
     def __init__(self):
@@ -131,3 +135,4 @@ class EdgeDetect(Command):
                                                     1, 1, 1, 1, 1,
                                                     1, 1, 1, 1, 1), 1, 0))
         output.save(img_path)
+        return img_path
