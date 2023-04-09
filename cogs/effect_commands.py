@@ -23,6 +23,7 @@ class EffectCog(commands.Cog):
 
     @commands.command(name="tri_animate", description="create an animated triangulation of an image")
     async def tri_animation(self, ctx, *args):
+        await ctx.send("Processing animation...")
         await process_command(ctx, TriAnimation(), *args)
 
     @tri_animation.error
@@ -33,6 +34,6 @@ class EffectCog(commands.Cog):
             await ctx.send(error)
         else:
             await ctx.send(f"Something unexpected happened {error}")
-            
+
 async def setup(bot):
     await bot.add_cog(EffectCog(bot))

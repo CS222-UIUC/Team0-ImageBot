@@ -21,7 +21,7 @@ clear last used image dict, and delete all the saved images.
 """
 def clear_image_cache():
     for channel in last_used_image_dict:
-        delete_img(last_used_image_dict[channel])
+        delete_file(last_used_image_dict[channel])
         last_used_image_dict.pop(channel)
 
 class InvalidURL(Exception):
@@ -74,7 +74,8 @@ async def process_url(ctx, url, func, **kwargs):
     
     out_path = await func(in_path, **kwargs)
     await send_file_by_path(ctx, out_path)
-    delete_img(in_path)
+    delete_file(in_path)
+    delete_file(out_path)
 
 """
 Checks if a URL leads to an image file
@@ -144,6 +145,6 @@ async def send_img_by_mat(ctx, img, filename):
 """
 Deletes an image at a given path
 """
-def delete_img(img_path):
+def delete_file(img_path):
     if os.path.exists(img_path):
         os.remove(img_path)

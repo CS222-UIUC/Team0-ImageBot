@@ -1,3 +1,4 @@
+import math
 import os
 import shutil
 from PIL import Image
@@ -39,21 +40,32 @@ class TriAnimation(Command):
         #setup output directory
         img_dir = os.path.dirname(img_path)
         out_dir = os.path.join(img_dir, "temp")
-        os.makedirs(out_dir)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+
+        def f(p, L, k, p0, y0):
+            return L/(1+math.exp(-k*(p-p0))) - y0
+
+        img_name = os.path.splitext(os.path.basename(img_path))
+        base_name = img_name[0]
+        extension = img_name[1]
 
         #create frames
         frames = []
-        #TODO: better point function
-        #see if we can keep the same seed?
-        for p in range(10, 2000, 50): 
-            #setup output name
-            base_name = os.path.basename(img_path)
-            _, extension = os.path.splitext(img_path)
-            out_path = os.path.join(out_dir, f"{base_name}_{p:04d}.{extension}")
-            
-            await triangulate_image(img_path, out_path, p)
+        num_frames = 25
+        for p in range(1, num_frames + 1): 
+            out_path = os.path.join(out_dir, f"{base_name}_{p:02d}.{extension}")           
+            await triangulate_image(img_path, out_path, f(p, 5000, 0.4, 14, 18))
             frames.append(Image.open(out_path))
-
+        
+        for p in range(num_frames, 1, -1):
+            #copy old frames
+            i = 2 * num_frames - p + 1
+            frame_p = os.path.join(out_dir, f"{base_name}_{p:02d}.{extension}")
+            frame_i = os.path.join(out_dir, f"{base_name}_{i:02d}.{extension}")
+            shutil.copy(frame_p, frame_i)
+            frames.append(Image.open(frame_i))
+        
         #create gif
         output_file = os.path.join(img_dir, "output.gif")
         frames[0].save(output_file, save_all=True, append_images=frames[1:], duration=100, loop=0)

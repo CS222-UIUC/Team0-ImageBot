@@ -24,17 +24,17 @@ class ImageScaling(Command):
         try:
             factor = float(Fraction(factor))
         except ValueError:
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise BadArgument
         if factor <= 0:
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise BadArgument
         size = os.stat(img_path).st_size
         new_size = size
         if factor > 1:
             new_size = size * factor**2
             if new_size > file_size_limit:
-                image_utils.delete_img(img_path)
+                image_utils.delete_file(img_path)
                 raise UserInputError
         display = True
         if new_size > display_file_size_limit:
@@ -44,7 +44,7 @@ class ImageScaling(Command):
             output = ImageOps.scale(im, factor)
         except ValueError:
             im.close()
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise UserInputError
         output.save(img_path)
         return display
@@ -64,10 +64,10 @@ class ImageResizing(Command):
             width = int(width)
             height = int(height)
         except ValueError:
-            image_utils.delete_img(image)
+            image_utils.delete_file(image)
             raise BadArgument
         if width <= 0 or height <= 0 or width > 65500 or height > 65500:
-            image_utils.delete_img(image)
+            image_utils.delete_file(image)
             raise BadArgument
         im = Image.open(image)
         old_width = im.width
@@ -79,7 +79,7 @@ class ImageResizing(Command):
             new_size = size * factor
             if new_size > file_size_limit:
                 im.close()
-                image_utils.delete_img(image)
+                image_utils.delete_file(image)
                 raise UserInputError
         display = True
         if new_size > display_file_size_limit:
@@ -96,7 +96,7 @@ class ImageRotation(Command):
         try:
             degree = float(degree)
         except ValueError:
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise BadArgument
         degree = degree % 360
         im = Image.open(img_path)
@@ -112,10 +112,10 @@ class ImageFlip(Command):
         try:
             direction = int(direction)
         except ValueError:
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise BadArgument
         if direction != 0 and direction != 1:
-            image_utils.delete_img(img_path)
+            image_utils.delete_file(img_path)
             raise BadArgument
         im = Image.open(img_path)
         output = im.transpose(direction)
