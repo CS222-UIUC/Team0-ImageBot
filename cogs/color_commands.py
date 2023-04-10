@@ -19,6 +19,8 @@ class ColorCog(commands.Cog):
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Grayscale().usage}")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 

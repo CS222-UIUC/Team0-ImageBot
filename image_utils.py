@@ -1,5 +1,5 @@
 import discord
-from discord.ext.commands import BadArgument
+from discord.ext.commands import BadArgument, TooManyArguments
 
 import cv2
 import io
@@ -60,6 +60,8 @@ async def process_command(ctx, command, *args, **kwargs):
     elif len(args) == 1: 
         # image sent as link
         await process_url(ctx, args[0], command.command, **kwargs)
+    else:
+        raise TooManyArguments
 """
 Applies func to the image at a url
 """

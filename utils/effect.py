@@ -47,7 +47,7 @@ class Triangulate(Command):
 
 class TriAnimation(Command):
     def __init__(self):
-        super().__init__("$triangulate_animate [image link/uploaded image")
+        super().__init__("$triangulate_animate [image link/uploaded image]")
     
     async def command(self, img_path):
         #setup output directory

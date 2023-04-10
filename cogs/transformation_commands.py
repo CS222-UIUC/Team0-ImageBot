@@ -22,6 +22,8 @@ class TransformationCog(commands.Cog):
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {ImageScaling().usage}")
         elif isinstance(error, BadArgument):
             await ctx.send("Factor needs to be a real positive number")
         elif isinstance(error, commands.UserInputError):
@@ -38,9 +40,11 @@ class TransformationCog(commands.Cog):
     async def resize_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {ImageResizing().usage}")
-        elif isinstance(error, CommandInvokeError):
+        if isinstance(error.__cause__, InvalidURL):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {ImageResizing().usage}")
         elif isinstance(error, BadArgument):
             await ctx.send("Width and Height need to be positive integers less than or equal to 65500")
         elif isinstance(error, commands.UserInputError):
@@ -60,6 +64,9 @@ class TransformationCog(commands.Cog):
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {ImageRotation().usage}")
+
         elif isinstance(error, BadArgument):
             await ctx.send("Degree needs to be a real number")
         else:
@@ -76,6 +83,8 @@ class TransformationCog(commands.Cog):
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {ImageFlip().usage}")
         elif isinstance(error, BadArgument):
             await ctx.send("Direction takes either 0 or 1")
         else:
