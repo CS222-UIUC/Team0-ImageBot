@@ -10,8 +10,8 @@ class EffectCog(commands.Cog):
     
     @commands.command(name="triangulate", description="triangulate an image")
     async def triangulate(self, ctx, points, *args):
-        await process_command(ctx, Triangulate(), *args, points=int(points))
-
+        await process_command(ctx, Triangulate(), *args, points=points)
+    
     @triangulate.error
     async def triangulate_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
@@ -20,7 +20,7 @@ class EffectCog(commands.Cog):
             await ctx.send(error)
         else:
             await ctx.send(f"Something unexpected happened {error}")
-
+    
     @commands.command(name="tri_animate", description="create an animated triangulation of an image")
     async def tri_animation(self, ctx, *args):
         await ctx.send("Processing animation...")

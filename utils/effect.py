@@ -7,6 +7,7 @@ from discord.ext.commands import BadArgument
 from triangler import *
 
 from command import Command
+import image_utils
 
 MIN_POINTS = 1
 MAX_POINTS = 16383
@@ -28,7 +29,13 @@ class Triangulate(Command):
     def __init__(self):
         super().__init__("$triangulate [points] [image link/uploaded image]")
     
-    async def command(self, img_path, points: int):
+    async def command(self, img_path, points):
+        try:
+            points = int(points)
+        except ValueError:
+            image_utils.delete_file(img_path)
+            raise BadArgument
+        
         await triangulate_image(img_path, img_path, points=points)
         return img_path
 
