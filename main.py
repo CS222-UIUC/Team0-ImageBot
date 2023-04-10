@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 
 from image_utils import process_command, spoof_human
+from command import Command
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -18,16 +19,19 @@ async def on_ready():
 """
 Basic func example, does nothing to the image
 """
-async def test_image_fun(img_path):
-    return
+class Echo(Command):
+    def __init__(self) -> None:
+        super().__init__("$echo [image link/uploaded image]")
+    async def command(self, img_path):
+        return img_path
 
 @bot.command(name="echo", description="Echos back the image")
 async def echo(ctx, *args):
-    await process_command(ctx, test_image_fun, *args)
+    await process_command(ctx, Echo(), *args)
 
 @echo.error
 async def echo_error_handler(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
+    if isinstance(error, commands.MissingRequiredArgument, ):
         await ctx.send("Please send a URL linking to your image")
     elif isinstance(error, commands.TooManyArguments):
         await ctx.send("Too many arguments!")
