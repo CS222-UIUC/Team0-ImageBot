@@ -49,7 +49,8 @@ if __name__ == "__main__":
 
     spoof_human()
 
-    cogs = ["color", "transformation", "effect"]
+    cogs = ["color", "transformation", "effect", "draw"]
+
     for cog in cogs:
         asyncio.run(bot.load_extension(f"cogs.{cog}_commands"))
     bot.run(BOT_TOKEN)
