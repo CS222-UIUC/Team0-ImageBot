@@ -14,7 +14,7 @@ MIN_POINTS = 1
 MAX_POINTS = 16383
 
 def normalize_image(img_path):
-    img = cv2.imread(img_path)
+    img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     img = cv2.normalize(img, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8U)
     cv2.imwrite(img_path, img)
 
@@ -29,7 +29,6 @@ async def triangulate_image(in_path, out_path, points: int):
         blur=2,
         pyramid_reduce=True,
     )
-    normalize_image(in_path)
     triangler_instance.convert_and_save(in_path, out_path)
 
 class Triangulate(Command):
@@ -42,7 +41,7 @@ class Triangulate(Command):
         except ValueError:
             image_utils.delete_file(img_path)
             raise BadArgument
-        
+        normalize_image(img_path)
         await triangulate_image(img_path, img_path, points=points)
         return img_path
 
@@ -56,6 +55,8 @@ class TriAnimation(Command):
         out_dir = os.path.join(img_dir, "temp")
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
+
+        normalize_image(img_path)
 
         def f(p, L, k, p0, y0):
             return L/(1+math.exp(-k*(p-p0))) - y0
