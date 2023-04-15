@@ -122,11 +122,10 @@ async def image_compression(image, rate):
     else:
         qlt = int(rate*100)
 
-    new_file_size = get_file_units(os.stat(image).st_size)
     if (new_file_name == None):
         im.save(image, quality=qlt)
+        new_file_size = get_file_units(os.stat(image).st_size)
     else:
-        # im.save(new_file_name, quality=100)
         im.save(new_file_name, quality=qlt)
         new_file_size = get_file_units(os.stat(new_file_name).st_size)
     old_file_size = get_file_units(old_file_size)
