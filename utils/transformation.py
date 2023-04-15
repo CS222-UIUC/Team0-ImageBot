@@ -8,6 +8,19 @@ import image_utils
 
 file_size_limit = 1 << 26 # 64 MB
 display_file_size_limit = 1 << 23 # 8 MB
+default_quality = 75
+file_size_units = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+
+def get_file_units(size_in_bytes):
+    size = float(size_in_bytes)
+    unit = 0
+    while True:
+        size_in_bytes = size_in_bytes >> 10
+        if size_in_bytes == 0:
+            break
+        unit += 1
+    size = f'{round(size / (1 << (unit * 10)), 2)} {file_size_units[unit]}'
+    return size
 
 async def image_scaling(image, factor):
     try:
@@ -79,17 +92,44 @@ async def image_rotation(image, degree):
     output.save(image)
 
 async def image_flip(image, direction):
-    try:
-        direction = int(direction)
-    except ValueError:
+    if direction != '0' and direction != '1':
         image_utils.delete_img(image)
         raise BadArgument
-    if direction != 0 and direction != 1:
-        image_utils.delete_img(image)
-        raise BadArgument
+    direction = int(direction)
     im = Image.open(image)
     output = im.transpose(direction)
     output.save(image)
+
+async def image_compression(image, rate):
+    old_file_size = os.stat(image).st_size
+    im = Image.open(image)
+    new_file_name = None
+    if im.format != 'JPEG':
+        im = im.convert('RGB')
+        new_file_name = image[:-3] + "jpg"
+    try:
+        rate = float(rate)
+    except ValueError:
+        im.close()
+        image_utils.delete_img(image)
+        raise BadArgument
+    if rate < 0 or rate > 1:
+        im.close()
+        image_utils.delete_img(image)
+        raise BadArgument
+    if (new_file_name == None):
+        qlt = int(rate*default_quality)
+    else:
+        qlt = int(rate*100)
+
+    if (new_file_name == None):
+        im.save(image, quality=qlt)
+        new_file_size = get_file_units(os.stat(image).st_size)
+    else:
+        im.save(new_file_name, quality=qlt)
+        new_file_size = get_file_units(os.stat(new_file_name).st_size)
+    old_file_size = get_file_units(old_file_size)
+    return (old_file_size, new_file_size, new_file_name)
 
 async def image_edge_detect(image):
     im = Image.open(image)
