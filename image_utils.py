@@ -10,6 +10,20 @@ from enum import Enum
 
 IMG_DIR = "imgs"
 MAX_FILENAME_LEN = 128
+ImageStatus = Enum('Image_Status_Enum', ['no_image', 'one_image', 'multiple_images'])
+
+"""
+This dict keeps track of the last used image path for each channel
+"""
+last_used_image_dict = {}
+
+"""
+clear last used image dict, and delete all the saved images.
+"""
+def clear_image_cache():
+    for channel in last_used_image_dict:
+        delete_img(last_used_image_dict[channel])
+        last_used_image_dict.pop(channel)
 
 
 """
@@ -31,24 +45,44 @@ Parameters:
     kwargs: the keyword arguments needed to run func
 """
 async def process_command(ctx, func, *args, **kwargs):
-    if len(args) == 0:
+    image_attached = ImageStatus.no_image
+    if (len(args) == 0):
         attachments = ctx.message.attachments
         if len(attachments) == 0:
-            await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+            attachments = ctx.message.attachments
+            if len(attachments) == 0:
+                image_attached = ImageStatus.no_image
+            else:
+                image_attached = ImageStatus.multiple_images
+    elif len(args) == 1:
+        image_attached = ImageStatus.one_image
+    
+    if (image_attached == ImageStatus.no_image):
+        await process_url(ctx, 0, func, **kwargs)
+    elif (image_attached == ImageStatus.one_image):
+        await process_url(ctx, args[0], func, **kwargs)
+    else:
         for img in attachments:
             await process_url(ctx, img.url, func, **kwargs)
-    elif len(args) == 1:
-        url = args[0]
-        await process_url(ctx, url, func, **kwargs)
-    else:
-        await ctx.send(("Sorry, I couldn't find an image or an image link in your message"))
+
+
+
 
 """
 Applies func to the image at a url
 """
 async def process_url(ctx, url, func, **kwargs):
+    if (url == 0):
+        if (ctx.channel in last_used_image_dict):
+            url = last_used_image_dict[ctx.channel]
+        else:
+            await ctx.send(("Sorry, I couldn't find an image or an image link in your message, or a recently used image in this channel"))
+            return
     img_path = download_img(url)
-    await func(img_path, **kwargs)
+    res = await func(img_path, **kwargs)
+    if (res != None):
+        delete_img(img_path)
+        img_path = res
     await send_img_by_path(ctx, img_path)
     delete_img(img_path)
 
@@ -101,7 +135,8 @@ Sends an image at the provided image path back to a user
 async def send_img_by_path(ctx, img_path):
     with open(img_path, "rb") as img:
         f = discord.File(img, filename=os.path.basename(img_path))
-        await ctx.send(file=f)
+        m = (await ctx.send(file=f))
+        last_used_image_dict[ctx.channel] = str(m.attachments[0])
 
 """
 Sends an image using the provided OpenCV Mat image back to a user

@@ -8,10 +8,12 @@
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
-All commands are prefixed with $.
+All commands are prefixed with $. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
 ### Meta Commands
 1. `$help`
-Provides a list of commands and arguments
+Provides a list of commands and arguments.
+2. `$echo`
+The bot echos back an image unchanged.
 ### Transformations
 1. `$scale [factor] [url]`
 Scales the provided image by the given amount. The factor must be positive. Additionally, neither height nor width of the resulting image can be greater than 65500 pixels.
@@ -21,9 +23,23 @@ Resizes the image to the given width and height. Likewise, neither height nor wi
 Rotates the image by the given degrees counterclockwise. Negative values rotate clockwise
 4. `$flip [direction] [url]`
 If direction is 1, then the image is flipped vertically such that the top is at the bottom. If direction is 0, then the image is flipped horizontally.
+5. `$compress [rate] [url]`
+Compresses a JPEG by the specified rate between 0 and 1, inclusive. Image file size decreases as the compression rate goes down. Beware that information is lost during compression.
+6. `$edge_detect [url]`
+Converts the image to a black and white image, where edges detected in the original image are colored white.
 ### Color Filters
-5. `$grayscale [url]`
+1. `$grayscale [url]`
 Returns a grayscale version of the given image.
+
+### Image Drawing
+1. `$pick_color [r] [g] [b]`
+Picks the color to be used by future commands, given by the selected color channels, taking values between 0 and 255, inclusive. Note that values outside of this range with be taken modulo 256. It also sends back a swatch of the selected color.
+2. `$sample_color [num_colors] [url]`
+Picks the dominant color in the image to be used by future commands, given it is divided into the [num_colors] most dominant colors. This is accomplished using k-means clustering. It also sends back a swatch of the selected color.
+3. `$line [x1] [y1] [x2] [y2] [width] [url]`
+Draws a line from point (x1, y1) to (x2, y2) with the given width of the saved color. Arguments must be integers, and width must be positive. Note that the coordinates are given such that (0, 0) is in the top left corner
+4. `$rect [x1] [y1] [x2] [y2] [width] [url]`
+Draws a rectangle bounded by the points (x1, y1), (x2, y2) of the saved color.
 
 ## Development Environment Setup
 
