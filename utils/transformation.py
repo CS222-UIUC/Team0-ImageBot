@@ -1,4 +1,4 @@
-from PIL import ImageOps, Image, ImageShow
+from PIL import ImageOps, Image, ImageFilter
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -131,3 +131,13 @@ async def image_compression(image, rate):
         new_file_size = get_file_units(os.stat(new_file_name).st_size)
     old_file_size = get_file_units(old_file_size)
     return (old_file_size, new_file_size, new_file_name)
+
+async def image_edge_detect(image):
+    im = Image.open(image)
+    im = im.convert("L")
+    output = im.filter(ImageFilter.Kernel((5,5), (1, 1, 1, 1, 1,
+                                                  1, 1, 1, 1, 1,
+                                                  1, 1, -24, 1, 1,
+                                                  1, 1, 1, 1, 1,
+                                                  1, 1, 1, 1, 1), 1, 0))
+    output.save(image)

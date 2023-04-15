@@ -93,5 +93,17 @@ class TransformationCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
+    """Edge detection"""
+    @commands.command(name="edge_detect", description="Edge detection of image")
+    async def edge_detect_image(self, ctx, *args):
+        await process_command(ctx, transformation.image_edge_detect, *args)
+
+    @edge_detect_image.error
+    async def edge_detect_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send("Usage: $edge_detect [url]")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+    
 async def setup(bot):
     await bot.add_cog(TransformationCog(bot))
