@@ -72,7 +72,6 @@ class ImageResizing(Command):
             await cntx.send("To see the image, please copy the link and open it in a browser")
         return img_path
 
-<<<<<<< HEAD
     async def image_resizing(self, image, width, height):
         try:
             width = int(width)
@@ -160,22 +159,22 @@ class Compress(Command):
         await cntx.send(f"Original file size is {old_file_size}, and compressed file size is {new_file_size}")
         return new_file_name
 
-    async def image_compression(self, image, rate):
-        old_file_size = os.stat(image).st_size
-        im = Image.open(image)
-        new_file_name = None
+    async def image_compression(self, img_path, rate):
+        old_file_size = os.stat(img_path).st_size
+        im = Image.open(img_path)
+        new_file_name = img_path
         if im.format != 'JPEG':
             im = im.convert('RGB')
-            new_file_name = image[:-3] + "jpg"
+            new_file_name = img_path[:-3] + "jpg"
         try:
             rate = float(rate)
         except ValueError:
             im.close()
-            image_utils.delete_img(image)
+            image_utils.delete_file(img_path)
             raise BadArgument
         if rate < 0 or rate > 1:
             im.close()
-            image_utils.delete_img(image)
+            image_utils.delete_file(img_path)
             raise BadArgument
         if (new_file_name == None):
             qlt = int(rate*default_quality)
@@ -183,8 +182,8 @@ class Compress(Command):
             qlt = int(rate*100)
 
         if (new_file_name == None):
-            im.save(image, quality=qlt)
-            new_file_size = get_file_units(os.stat(image).st_size)
+            im.save(img_path, quality=qlt)
+            new_file_size = get_file_units(os.stat(img_path).st_size)
         else:
             im.save(new_file_name, quality=qlt)
             new_file_size = get_file_units(os.stat(new_file_name).st_size)
