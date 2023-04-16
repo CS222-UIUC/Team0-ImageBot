@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect
+from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect, Compress
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
 from image_utils import process_command, InvalidURL
@@ -8,9 +8,7 @@ class TransformationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    """
-    Scaling
-    """
+    """Scaling"""
     @commands.command(name="scale", description="scale image by factor")
     async def scale(self, ctx, factor, *args):
         await process_command(ctx, ImageScaling(), *args, factor=factor, cntx=ctx)
@@ -72,6 +70,7 @@ class TransformationCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
+    """Flip"""
     @commands.command(name="flip", description="flip image left right or top bottom")
     async def flip_image(self, ctx, direction, *args):
         await process_command(ctx, ImageFlip(), *args, direction=direction)
@@ -90,6 +89,21 @@ class TransformationCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
+    """Compression"""
+    @commands.command(name="compress", description="compress image by a rate")
+    async def compress_image(self, ctx, rate, *args):
+        await process_command(ctx, Compress(), *args, rate=rate, cntx=ctx)
+
+    @compress_image.error
+    async def compress_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+            await ctx.send(f"Usage: {Compress().usage}")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send(f"Usage: {Compress().usage}")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+
+    """Edge detection"""
     @commands.command(name="edge_detect", description="Edge detection of image")
     async def edge_detect_image(self, ctx, *args):
         await process_command(ctx, EdgeDetect(), *args)

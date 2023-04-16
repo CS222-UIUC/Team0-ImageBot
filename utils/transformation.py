@@ -9,6 +9,19 @@ import image_utils
 
 file_size_limit = 1 << 26 # 64 MB
 display_file_size_limit = 1 << 23 # 8 MB
+default_quality = 75
+file_size_units = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+
+def get_file_units(size_in_bytes):
+    size = float(size_in_bytes)
+    unit = 0
+    while True:
+        size_in_bytes = size_in_bytes >> 10
+        if size_in_bytes == 0:
+            break
+        unit += 1
+    size = f'{round(size / (1 << (unit * 10)), 2)} {file_size_units[unit]}'
+    return size
 
 class ImageScaling(Command):
     def __init__(self):
@@ -59,6 +72,7 @@ class ImageResizing(Command):
             await cntx.send("To see the image, please copy the link and open it in a browser")
         return img_path
 
+<<<<<<< HEAD
     async def image_resizing(self, image, width, height):
         try:
             width = int(width)
@@ -136,3 +150,43 @@ class EdgeDetect(Command):
                                                     1, 1, 1, 1, 1), 1, 0))
         output.save(img_path)
         return img_path
+
+class Compress(Command):
+    def __init__(self):
+        super().__init__("$compress [rate] [url]\n-Rate is a real number between 0 and 1, inclusive")
+
+    async def command(self, img_path, rate, cntx):
+        old_file_size, new_file_size, new_file_name = await self.image_compression(img_path, rate)
+        await cntx.send(f"Original file size is {old_file_size}, and compressed file size is {new_file_size}")
+        return new_file_name
+
+    async def image_compression(self, image, rate):
+        old_file_size = os.stat(image).st_size
+        im = Image.open(image)
+        new_file_name = None
+        if im.format != 'JPEG':
+            im = im.convert('RGB')
+            new_file_name = image[:-3] + "jpg"
+        try:
+            rate = float(rate)
+        except ValueError:
+            im.close()
+            image_utils.delete_img(image)
+            raise BadArgument
+        if rate < 0 or rate > 1:
+            im.close()
+            image_utils.delete_img(image)
+            raise BadArgument
+        if (new_file_name == None):
+            qlt = int(rate*default_quality)
+        else:
+            qlt = int(rate*100)
+
+        if (new_file_name == None):
+            im.save(image, quality=qlt)
+            new_file_size = get_file_units(os.stat(image).st_size)
+        else:
+            im.save(new_file_name, quality=qlt)
+            new_file_size = get_file_units(os.stat(new_file_name).st_size)
+        old_file_size = get_file_units(old_file_size)
+        return (old_file_size, new_file_size, new_file_name)
