@@ -1,10 +1,21 @@
 import asyncio
 import os
+import signal
+import sys
 
 import discord
 from discord.ext import commands
 
 from image_utils import process_command, spoof_human
+
+IMG_DIR = "imgs"
+
+def singal_handler(signum, frame):
+    for f in os.listdir(IMG_DIR):
+        os.remove(os.path.join(IMG_DIR, f))
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, singal_handler)
 
 intents = discord.Intents.default()
 intents.message_content = True
