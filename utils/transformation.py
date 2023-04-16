@@ -172,9 +172,14 @@ async def gif_create(image_paths):
     if not is_valid or len(image_paths) == 1:
         raise BadArgument
     im = Image.open(image_paths[0])
+    width, height = im.width, im.height
     images = []
     for i in range(1, len(image_paths)):
-        images.append(Image.open(image_paths[i]))
+        img_path = image_paths[i]
+        img = Image.open(img_path)
+        img = img.resize((width, height))
+        images.append(img)
+        img.save(img_path)
     im.save(default_gif_path, save_all=True, append_images=images, duration=500, loop=0)
     clear_all_images(image_paths)
 
@@ -183,8 +188,18 @@ async def gif_append_image(gif_path, image_paths):
     if not is_valid:
         raise BadArgument
     im = Image.open(gif_path)
+    width, height = im.width, im.height
     images = [frame.copy() for frame in ImageSequence.Iterator(im)]
     for i in range(0, len(image_paths)):
-        images.append(Image.open(image_paths[i]))
+        img_path = image_paths[i]
+        img = Image.open(img_path)
+        if img.format == 'GIF':
+            for j, frame in enumerate(img):
+                frame[j].resize((width, height))
+                images.append(frame[j])
+        else:
+            img = img.resize((width, height))
+            images.append(img)
+            img.save(img_path)
     images[0].save(gif_path, save_all=True, append_images=images[1:], duration=500, loop=0)
     clear_all_images(image_paths)
