@@ -123,6 +123,7 @@ async def voronoi_image(in_path, out_path, num_points: int, seed: int):
 class Voronoi(Command):
     def __init__(self):
         super().__init__("$voronoi [points] [seed] [image link/uploaded image]")
+    
     async def command(self, img_path, points, seed):
         try:
             points = int(points)
@@ -132,3 +133,51 @@ class Voronoi(Command):
             raise BadArgument
         await voronoi_image(img_path, img_path, num_points=points, seed=seed)
         return img_path
+
+class VoronoiAnimation(Command):
+    def __init__(self):
+        super().__init__("$voronoi_animate [seed] [image link/uploaded image]")
+
+    async def command(self, img_path, seed):
+        try:
+            seed = int(seed)
+        except ValueError:
+            image_utils.delete_file(img_path)
+            raise BadArgument
+
+        #setup output directory
+        img_dir = os.path.dirname(img_path)
+        out_dir = os.path.join(img_dir, "temp")
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+
+        def f(p, L, k, p0, y0):
+            return int(L/(1+math.exp(-k*(p-p0))) - y0)
+
+        img_name = os.path.splitext(os.path.basename(img_path))
+        base_name = img_name[0]
+        extension = img_name[1]
+
+        #create frames
+        frames = []
+        num_frames = 25
+        for p in range(1, num_frames + 1): 
+            out_path = os.path.join(out_dir, f"{base_name}_{p:02d}.{extension}")           
+            await voronoi_image(img_path, out_path, num_points = f(p, 5000, 0.4, 14, 18), seed=seed)
+            frames.append(Image.open(out_path))
+        
+        for p in range(num_frames, 1, -1):
+            #copy old frames
+            i = 2 * num_frames - p + 1
+            frame_p = os.path.join(out_dir, f"{base_name}_{p:02d}.{extension}")
+            frame_i = os.path.join(out_dir, f"{base_name}_{i:02d}.{extension}")
+            shutil.copy(frame_p, frame_i)
+            frames.append(Image.open(frame_i))
+        
+        #create gif
+        output_file = os.path.join(img_dir, "output.gif")
+        frames[0].save(output_file, save_all=True, append_images=frames[1:], duration=100, loop=0)
+
+        #delete output dir
+        shutil.rmtree(out_dir)
+        return output_file
