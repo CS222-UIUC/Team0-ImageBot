@@ -11,6 +11,7 @@ display_file_size_limit = 1 << 23 # 8 MB
 default_gif_path = "imgs\default.gif"
 default_quality = 75
 file_size_units = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+app_imgs_dir = "imgs/app_imgs"
 
 def get_file_units(size_in_bytes):
     size = float(size_in_bytes)
@@ -146,9 +147,11 @@ def are_image_paths_valid(image_paths):
     image_paths = image_paths.split()
     is_valid = True
     index = 0
+    if not os.path.exists(app_imgs_dir):
+        os.mkdir(app_imgs_dir)
     for i in range(0, len(image_paths)):
         try:
-            image_paths[i] = image_utils.download_img(image_paths[i])
+            image_paths[i] = image_utils.download_img(image_paths[i], app_imgs_dir)
             filename, ext = os.path.splitext(image_paths[i])
             new_image_path = f"{filename}{i}{ext}"
             os.rename(image_paths[i], new_image_path)
@@ -163,9 +166,9 @@ def are_image_paths_valid(image_paths):
     
     return (is_valid, image_paths)
 
-def clear_all_images(image_paths):
-    for img_path in image_paths:
-        image_utils.delete_img(img_path)
+def clear_all_images():
+    for filename in os.listdir(app_imgs_dir):
+        os.remove(os.path.join(app_imgs_dir, filename))
 
 async def gif_create(image_paths):
     is_valid, image_paths = are_image_paths_valid(image_paths)
@@ -181,7 +184,7 @@ async def gif_create(image_paths):
         images.append(img)
         img.save(img_path)
     im.save(default_gif_path, save_all=True, append_images=images, duration=500, loop=0)
-    clear_all_images(image_paths)
+    clear_all_images()
 
 async def gif_append_image(gif_path, image_paths):
     is_valid, image_paths = are_image_paths_valid(image_paths)
@@ -194,12 +197,14 @@ async def gif_append_image(gif_path, image_paths):
         img_path = image_paths[i]
         img = Image.open(img_path)
         if img.format == 'GIF':
-            for j, frame in enumerate(img):
-                frame[j].resize((width, height))
-                images.append(frame[j])
+            for j in range(0, img.n_frames):
+                img.seek(j)
+                frame = img.resize((width, height))
+                images.append(frame)
+            img.close()
         else:
             img = img.resize((width, height))
             images.append(img)
             img.save(img_path)
     images[0].save(gif_path, save_all=True, append_images=images[1:], duration=500, loop=0)
-    clear_all_images(image_paths)
+    clear_all_images()

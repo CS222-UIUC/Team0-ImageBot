@@ -103,17 +103,17 @@ def is_img_file(url):
 """
 Attempts to download image from URL
 """
-def download_img(url):
+def download_img(url, dir=IMG_DIR):
     if not is_img_file(url):
         raise BadArgument("Invalid URL: not an image")
 
-    if not os.path.exists(IMG_DIR):
-        os.mkdir(IMG_DIR)
+    if not os.path.exists(dir):
+        os.mkdir(dir)
 
     filename = os.path.basename(url)
     if len(filename) >= MAX_FILENAME_LEN:
         filename = "img"
-    img_path = os.path.join(IMG_DIR, filename)
+    img_path = os.path.join(dir, filename)
     # create an image extension if one wasn't specified in the URL
     __, ext = os.path.splitext(img_path)
     if not ext:
