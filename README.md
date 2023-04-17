@@ -5,6 +5,7 @@
     1. [Meta Commands](#meta-commands)
     2. [Transformations](#transformations)
     3. [Color Filters](#color-filters)
+    4. [Effects](#effects)
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
@@ -30,6 +31,13 @@ Converts the image to a black and white image, where edges detected in the origi
 ### Color Filters
 1. `$grayscale [url]`
 Returns a grayscale version of the given image.
+### Effects
+1. `$triangulate [points] [url]`
+Returns a triangulated version of an image.
+    * `points` - integer in range [1, 16383) specifying how many samples from the image to take
+2. `$tri_animate [url]`
+Returns a gif with a triangulation effect.
+
 
 ### Image Drawing
 1. `$pick_color [r] [g] [b]`
