@@ -2,6 +2,7 @@ import asyncio
 import os
 import signal
 import sys
+import shutil
 
 import discord
 from discord.ext import commands
@@ -11,8 +12,12 @@ from image_utils import process_command, spoof_human
 IMG_DIR = "imgs"
 
 def singal_handler(signum, frame):
-    for f in os.listdir(IMG_DIR):
-        os.remove(os.path.join(IMG_DIR, f))
+    for filename in os.listdir(IMG_DIR):
+        filepath = os.path.join(IMG_DIR, filename)
+        if os.path.isfile(filepath) or os.path.islink(filepath):
+            os.unlink(filepath)
+        elif os.path.isdir(filepath):
+            shutil.rmtree(filepath)
     sys.exit(0)
 
 signal.signal(signal.SIGINT, singal_handler)
