@@ -13,8 +13,11 @@ from triangler import *
 from command import Command
 import image_utils
 
-MIN_POINTS = 1
-MAX_POINTS = 16383
+MIN_TRI_POINTS = 1
+MAX_TRI_POINTS = 16383
+
+MIN_VORONOI_POINTS = 4
+MAX_VORONOI_POINTS = 32768
 
 def normalize_image(img_path):
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
@@ -22,8 +25,8 @@ def normalize_image(img_path):
     cv2.imwrite(img_path, img)
 
 async def triangulate_image(in_path, out_path, points: int):
-    if points > MAX_POINTS or points < MIN_POINTS:
-        raise BadArgument(f"Number of points must be in range [{MIN_POINTS}, {MAX_POINTS}]")
+    if points > MAX_TRI_POINTS or points < MIN_TRI_POINTS:
+        raise BadArgument(f"Number of points must be in range [{MIN_TRI_POINTS}, {MAX_TRI_POINTS}]")
     triangler_instance = Triangler(
         edge_method=EdgeMethod.SOBEL,
         sample_method=SampleMethod.POISSON_DISK,
@@ -93,8 +96,8 @@ class TriAnimation(Command):
         return output_file
 
 async def voronoi_image(in_path, out_path, num_points: int, seed: int):
-    if num_points < 4:
-        raise BadArgument("Points must be in range [4, x]")
+    if num_points < MIN_VORONOI_POINTS or num_points > MAX_VORONOI_POINTS:
+        raise BadArgument(f"Points must be in range [{MIN_VORONOI_POINTS}, {MAX_VORONOI_POINTS}]")
 
     np.random.seed(seed)
     img = Image.open(in_path)
@@ -104,16 +107,28 @@ async def voronoi_image(in_path, out_path, num_points: int, seed: int):
     height = np_img.shape[0]
     width = np_img.shape[1]
 
-    points = np.random.rand(num_points, 2) * [width, height]
+    points = np.random.rand(num_points, 2) * [height, width]
 
     rgb = np.zeros((num_points, 3), dtype=np.uint8)
     for i in range(num_points):
         p = points[i]
-        x, y = int(p[0]), int(p[1])
-        rgb[i, :] = np_img[x, y, :3]
+        y, x = int(p[0]), int(p[1])
+        rgb[i, :] = np_img[y, x, :3]
 
-    grid_x, grid_y = np.mgrid[0:width, 0:height]
+    grid_x, grid_y = np.mgrid[0:height, 0:width]
     labels = griddata(points, np.arange(num_points), (grid_x, grid_y), method='nearest')
     rgb_labels = rgb[labels]
     plt.imsave(out_path, rgb_labels)
 
+class Voronoi(Command):
+    def __init__(self):
+        super().__init__("$voronoi [points] [seed] [image link/uploaded image]")
+    async def command(self, img_path, points, seed):
+        try:
+            points = int(points)
+            seed = int(seed)
+        except ValueError:
+            image_utils.delete_file(img_path)
+            raise BadArgument
+        await voronoi_image(img_path, img_path, num_points=points, seed=seed)
+        return img_path

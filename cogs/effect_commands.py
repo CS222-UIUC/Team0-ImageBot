@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
-from utils.effect import Triangulate, TriAnimation
+from utils.effect import Triangulate, TriAnimation, Voronoi
 from image_utils import process_command, InvalidURL
 
 class EffectCog(commands.Cog):
@@ -46,6 +46,23 @@ class EffectCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened {error}")
     
+    @commands.command(name="voronoi", description="create a voronoi diagram from an image")
+    async def voronoi(self, ctx, points, seed, *args):
+        await process_command(ctx, Voronoi(), *args, points=points, seed=seed)
+    
+    @voronoi.error
+    async def voronoi_error_handler(self, ctx, error):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {Voronoi().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send(error)
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Voronoi().usage}")
+        else:
+            await ctx.send(f"Something unexpected happened {error}")
 
 async def setup(bot):
     await bot.add_cog(EffectCog(bot))
