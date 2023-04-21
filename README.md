@@ -6,6 +6,7 @@
     2. [Transformations](#transformations)
     3. [Color Filters](#color-filters)
     4. [Effects](#effects)
+    5. [GIFs](#gifs)
 2. [Development Environment Setup](#development-environment-setup)
 
 ## Available Commands
@@ -28,10 +29,6 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 Compresses a JPEG by the specified rate between 0 and 1, inclusive. Image file size decreases as the compression rate goes down. Beware that information is lost during compression.
 6. `$edge_detect [url]`
 Converts the image to a black and white image, where edges detected in the original image are colored white.
-7. `$create_gif ["image1_url..."] [cover_image_url]`
-Creates a gif from input images and the cover image. If input images have different dimensions, all are resized to the dimension of cover_image.
-8. `$append_gif ["image1_url..."] [gif_url]`
-Appends input images to the given gif. If input images have different dimensions, all are resized to the dimension of the gif. Appending images can be gifs.
 ### Color Filters
 1. `$grayscale [url]`
 Returns a grayscale version of the given image.
@@ -41,7 +38,11 @@ Returns a triangulated version of an image.
     * `points` - integer in range [1, 16383) specifying how many samples from the image to take
 2. `$tri_animate [url]`
 Returns a gif with a triangulation effect.
-
+### GIFs
+1. `$create_gif [\"image_url1 image_url2 ... image_urln\"] [cover_image_url]`
+Creates a gif from input images and the cover image. If input images have different dimensions, all are resized to the dimension of cover_image.
+2. `$append_gif [\"image_url1 image_url2 ... image_urln\"] [gif_url]`
+Appends input images to the given gif. If input images have different dimensions, all are resized to the dimension of the gif. Appending images can be gifs.
 
 ### Image Drawing
 1. `$pick_color [r] [g] [b]`
