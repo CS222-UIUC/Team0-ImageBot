@@ -1,11 +1,27 @@
 import asyncio
 import os
+import signal
+import sys
+import shutil
 
 import discord
 from discord.ext import commands
 
 from image_utils import process_command, spoof_human
 from command import Command
+
+IMG_DIR = "imgs"
+
+def singal_handler(signum, frame):
+    for filename in os.listdir(IMG_DIR):
+        filepath = os.path.join(IMG_DIR, filename)
+        if os.path.isfile(filepath) or os.path.islink(filepath):
+            os.unlink(filepath)
+        elif os.path.isdir(filepath):
+            shutil.rmtree(filepath)
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, singal_handler)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -53,7 +69,7 @@ if __name__ == "__main__":
 
     spoof_human()
 
-    cogs = ["color", "transformation", "effect", "draw"]
+    cogs = ["color", "transformation", "effect", "draw", "gif"]
 
     for cog in cogs:
         asyncio.run(bot.load_extension(f"cogs.{cog}_commands"))

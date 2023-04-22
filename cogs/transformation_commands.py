@@ -114,6 +114,6 @@ class TransformationCog(commands.Cog):
             await ctx.send(f"Usage: {EdgeDetect().usage}")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
-    
+
 async def setup(bot):
     await bot.add_cog(TransformationCog(bot))

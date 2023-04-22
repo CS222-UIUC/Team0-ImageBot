@@ -1,4 +1,4 @@
-from PIL import ImageOps, Image, ImageFilter
+from PIL import ImageOps, Image, ImageFilter, ImageSequence
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -7,10 +7,10 @@ import os
 from command import Command
 import image_utils
 
-file_size_limit = 1 << 26 # 64 MB
-display_file_size_limit = 1 << 23 # 8 MB
-default_quality = 75
-file_size_units = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+FILE_SIZE_LIMIT = 1 << 26 # 64 MB
+DISPLAY_FILE_SIZE_LIMIT = 1 << 23 # 8 MB
+DEFAULT_QUALITY = 75
+FILE_SIZE_UNITS = {0 : 'B', 1 : 'KB', 2 : 'MB'}
 
 def get_file_units(size_in_bytes):
     size = float(size_in_bytes)
@@ -20,7 +20,7 @@ def get_file_units(size_in_bytes):
         if size_in_bytes == 0:
             break
         unit += 1
-    size = f'{round(size / (1 << (unit * 10)), 2)} {file_size_units[unit]}'
+    size = f'{round(size / (1 << (unit * 10)), 2)} {FILE_SIZE_UNITS[unit]}'
     return size
 
 class ImageScaling(Command):
@@ -46,11 +46,11 @@ class ImageScaling(Command):
         new_size = size
         if factor > 1:
             new_size = size * factor**2
-            if new_size > file_size_limit:
+            if new_size > FILE_SIZE_LIMIT:
                 image_utils.delete_file(img_path)
                 raise UserInputError
         display = True
-        if new_size > display_file_size_limit:
+        if new_size > DISPLAY_FILE_SIZE_LIMIT:
             display = False
         im = Image.open(img_path)
         try:
@@ -90,12 +90,12 @@ class ImageResizing(Command):
         if width > old_width or height > old_height:
             factor = width * height / (old_width * old_height)
             new_size = size * factor
-            if new_size > file_size_limit:
+            if new_size > FILE_SIZE_LIMIT:
                 im.close()
                 image_utils.delete_file(image)
                 raise UserInputError
         display = True
-        if new_size > display_file_size_limit:
+        if new_size > DISPLAY_FILE_SIZE_LIMIT:
             display = False
         output = im.resize((width, height))
         output.save(image)
@@ -177,7 +177,7 @@ class Compress(Command):
             image_utils.delete_file(img_path)
             raise BadArgument
         if (new_file_name == None):
-            qlt = int(rate*default_quality)
+            qlt = int(rate*DEFAULT_QUALITY)
         else:
             qlt = int(rate*100)
 
@@ -189,3 +189,4 @@ class Compress(Command):
             new_file_size = get_file_units(os.stat(new_file_name).st_size)
         old_file_size = get_file_units(old_file_size)
         return (old_file_size, new_file_size, new_file_name)
+
