@@ -16,6 +16,8 @@ All commands are prefixed with $. Additionally, note that the url argument is op
 Provides a list of commands and arguments.
 2. `$echo`
 The bot echos back an image unchanged.
+3. `$info`
+The bot prints the dimensions, a hash value, and all exif data associated with the image, then echos back the image. The hash value is the md5 hash, and thus, should only be used as a checksum. Note the hash value is affected by metadata.
 ### Transformations
 1. `$scale [factor] [url]`
 Scales the provided image by the given amount. The factor must be positive. Additionally, neither height nor width of the resulting image can be greater than 65500 pixels.
