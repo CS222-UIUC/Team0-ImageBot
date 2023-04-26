@@ -1,4 +1,5 @@
-from PIL import ImageOps, Image, ImageFilter, ImageSequence
+from PIL import ImageOps, Image, ImageFilter
+from ascii_magic import AsciiArt, from_image
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -190,3 +191,21 @@ class Compress(Command):
         old_file_size = get_file_units(old_file_size)
         return (old_file_size, new_file_size, new_file_name)
 
+class Ascii(Command):
+    def __init__(self):
+        super().__init__("$to_ascii [color] [image link/uploaded image]\n\t-color: 0 indicates ascii art is monochromatic, 1 indicates full color")
+
+    async def command(self, img_path, color, cntx):
+        new_file_path = await self.to_ascii(img_path, color)
+        await cntx.send("To see the ascii art, please download the html file and open it in a browser")
+        return new_file_path
+
+    async def to_ascii(self, img_path, color):
+        if color != '0' and color != '1':
+            raise BadArgument
+        color = True if color == '0' else False
+        im = AsciiArt.from_image(img_path)
+        filename, __ = os.path.splitext(img_path)
+        new_file_path = f"{filename}.html"
+        im.to_html_file(new_file_path, columns=200, monochrome=color)
+        return new_file_path
