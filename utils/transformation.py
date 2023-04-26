@@ -11,6 +11,7 @@ FILE_SIZE_LIMIT = 1 << 26 # 64 MB
 DISPLAY_FILE_SIZE_LIMIT = 1 << 23 # 8 MB
 DEFAULT_QUALITY = 75
 FILE_SIZE_UNITS = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+SHARPEN_LEVELS = [f"{i}" for i in range(1, 5)]
 
 def get_file_units(size_in_bytes):
     size = float(size_in_bytes)
@@ -190,3 +191,16 @@ class Compress(Command):
         old_file_size = get_file_units(old_file_size)
         return (old_file_size, new_file_size, new_file_name)
 
+class Sharpen(Command):
+    def __init__(self):
+        super().__init__("$sharpen [level] [image link/uploaded image]\n\t-level is an integer from 1 to 4")
+
+    async def command(self, img_path, level):
+        im = Image.open(img_path)
+        if level not in SHARPEN_LEVELS:
+            raise BadArgument
+        level = int(level)
+        for i in range(0, level):
+            im = im.filter(ImageFilter.SHARPEN)
+        im.save(img_path)
+        return img_path
