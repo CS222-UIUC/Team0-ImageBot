@@ -29,6 +29,8 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 Compresses a JPEG by the specified rate between 0 and 1, inclusive. Image file size decreases as the compression rate goes down. Beware that information is lost during compression.
 6. `$edge_detect [url]`
 Converts the image to a black and white image, where edges detected in the original image are colored white.
+7. `$sharpen [level] [url]`
+Sharpens the image by the given level from 1 to 4. The higher the level is, the sharper the image becomes.
 ### Color Filters
 1. `$grayscale [url]`
 Returns a grayscale version of the given image.

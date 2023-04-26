@@ -153,7 +153,7 @@ class EdgeDetect(Command):
 
 class Compress(Command):
     def __init__(self):
-        super().__init__("$compress [rate] [url]\n\t-rate is a real number between 0 and 1, inclusive")
+        super().__init__("$compress [rate] [image link/uploaded image]\n\t-rate is a real number between 0 and 1, inclusive")
 
     async def command(self, img_path, rate, cntx):
         old_file_size, new_file_size, new_file_name = await self.image_compression(img_path, rate)
