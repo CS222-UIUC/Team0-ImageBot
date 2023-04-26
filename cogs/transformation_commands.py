@@ -64,7 +64,6 @@ class TransformationCog(commands.Cog):
                 await ctx.send(error.__cause__)
             elif isinstance(error.__cause__, TooManyArguments):
                 await ctx.send(f"Too many arguments. Usage: {ImageRotation().usage}")
-
         elif isinstance(error, BadArgument):
             await ctx.send("Degree needs to be a real number")
         else:
@@ -96,10 +95,15 @@ class TransformationCog(commands.Cog):
 
     @compress_image.error
     async def compress_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {Compress().usage}")
-        elif isinstance(error, commands.BadArgument):
-            await ctx.send(f"Usage: {Compress().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Compress().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send("Rate is a real number between 0 and 1, inclusive")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
@@ -112,6 +116,11 @@ class TransformationCog(commands.Cog):
     async def edge_detect_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {EdgeDetect().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {EdgeDetect().usage}")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
@@ -129,7 +138,6 @@ class TransformationCog(commands.Cog):
                 await ctx.send(error.__cause__)
             elif isinstance(error.__cause__, TooManyArguments):
                 await ctx.send(f"Too many arguments. Usage: {Sharpen().usage}")
-
         elif isinstance(error, BadArgument):
             await ctx.send("Level is an integer from 1 to 4")
         else:
