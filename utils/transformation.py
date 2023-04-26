@@ -1,5 +1,5 @@
 from PIL import ImageOps, Image, ImageFilter
-from ascii_magic import AsciiArt, from_image
+from ascii_magic import AsciiArt
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
