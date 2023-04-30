@@ -185,13 +185,15 @@ Files:
 #### Effects Handler
 The triangulation effect is created using the [triangler](https://github.com/tdh8316/triangler) library by [Donghyeok Tak](https://github.com/tdh8316). 
 
-The voronoi effect is created by taking a random sample of pixels with `numpy`, and uses `scipy`'s `griddata` function to get the nearest of these samples for every pixel in the picture.
+The voronoi effect is created by taking a random sample of pixels with `numpy`, and uses `scipy`'s `griddata` function to get the nearest of these samples for every pixel in the picture, effectively creating voronoi cells.
 
-The GIF effects are created by changing the number of points used in each frame, while keeping the seeds constant to keep temporal coherence.
+The GIF effects are created by changing the number of points used in each frame, while keeping the seeds constant to keep temporal coherence. The `os` and `shutil` modules were especially useful for file creation and deletion here. 
+
+OpenCV is also used, mostly to get images into a clean format before processing. Pillow and Matplotlib are used for opening and saving images. 
 
 Files:
 * `cogs/effect_commands.py` - Listens for effect commands, and handles errors
-* `utils/effect.py` - Contains classes for 
+* `utils/effect.py` - Contains classes for applying effects to images
 
 Contributors:
 * [Brendan](https://github.com/BrendanParmer)

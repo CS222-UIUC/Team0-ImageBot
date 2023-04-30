@@ -3,3 +3,4 @@ __pycache__/
 imgs/
 BOT_TOKEN.txt
 utils/__pycache__/
+test.py
