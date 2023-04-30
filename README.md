@@ -105,6 +105,8 @@ Draws a rectangle bounded by the points (x1, y1), (x2, y2) of the saved color.
     and `Ctrl+C` to stop.
 
 ## Architecture
+For this project, we chose to use Python. The language is both simple and familiar, and it has large selection of libraries to choose from, making it easy to quickly build up our project. 
+
 ```mermaid
 flowchart LR
     id1(Discord Chat) -->|command|id2(Command Handler);
@@ -123,15 +125,77 @@ flowchart LR
     click id7 "https://github.com/CS222-UIUC/Team0-ImageBot#drawing-handler"
 ```
 ### Discord Chat
+Users can interact with the bot by entering commands, as described in the [Available Commands](#available-commands) section. After processing it, the bot will then send back the image or GIF.
+
+For interfacing with Discord, we're using version 2.1.1 of the popular [discord.py](https://discordpy.readthedocs.io/en/stable/) library.
+
+Files:
+* `main.py`
+* `image_utils.py`
+* `cogs/*.py`
+
+Contributors:
+* [Brendan](https://github.com/BrendanParmer)
+* [Daniel](https://github.com/dsding2)
+* [Jason](https://github.com/Jason717717)
+* [Adrian](https://github.com/Ulico)
+
 
 ### Command Handler
+The Command Handler is broadly responsible for processing the command string and the image sent by the user, as well as returning the result given by the appropriate handler. 
 
-### Transformation Handler
+In general, a command goes through the following steps
 
-### Color Handler
+```mermaid
+flowchart LR
+    id1(Process Message)-->|image given as link|id2(Check the URL and download the image)
+    id1-->|image given as attachment|id3(Download the attachment)
+    id1-->|no image specified|id4(Use the last image processed in the channel)
+    id2-->id5(Handler)
+    id3-->id5
+    id4-->id5
+    id5-->|Creates a file to send|id6(Send to the user)
+    id6-->id7(Clean-up and delete the file)
+```
+Downloading the image mostly uses the `urllib` library, which we use for setting a user-agent, checking to see if the link is an image, and actually downloading the image. The `os` library is used for handling filenames, directory creation, creating files, and deleting them. 
 
-### Effects Handler
+Files:
+* `image_utils.py`
 
-### GIF Handler
+Contributors:
+* [Brendan](https://github.com/BrendanParmer)
+* [Daniel](https://github.com/dsding2)
+* [Jason](https://github.com/Jason717717)
+* [Adrian](https://github.com/Ulico)
 
-### Drawing Handler
+### Handlers
+The bulk of the bot's functionality is taken care of by the handlers. The bot was designed to make it easy to add on new handlers with ease.
+
+Each handler has two files associated with it, located in the following directories:
+1. `cogs`: interface to register the Discord command and handle any errors that come up.
+2. `utils`: the actual logic that processes an image. 
+    * These files contain classes that derive from a base `Command` class, which requires each component to implement a `usage` string and a `command` function with an `img_path` argument
+
+Files:
+* `command.py`
+#### Transformation Handler
+
+#### Color Handler
+
+#### Effects Handler
+The triangulation effect is created using the [triangler](https://github.com/tdh8316/triangler) library by [Donghyeok Tak](https://github.com/tdh8316). 
+
+The voronoi effect is created by taking a random sample of pixels with `numpy`, and uses `scipy`'s `griddata` function to get the nearest of these samples for every pixel in the picture.
+
+The GIF effects are created by changing the number of points used in each frame, while keeping the seeds constant to keep temporal coherence.
+
+Files:
+* `cogs/effect_commands.py` - Listens for effect commands, and handles errors
+* `utils/effect.py` - Contains classes for 
+
+Contributors:
+* [Brendan](https://github.com/BrendanParmer)
+
+#### GIF Handler
+
+#### Drawing Handler
