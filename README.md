@@ -1,16 +1,23 @@
-﻿# Team0-ImageBot
+﻿# Image Bot
 
-# Table of Contents
-1. [Available Commands](#available-commands)
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Available Commands](#available-commands)
     1. [Meta Commands](#meta-commands)
     2. [Transformations](#transformations)
     3. [Color Filters](#color-filters)
     4. [Effects](#effects)
     5. [GIFs](#gifs)
-2. [Development Environment Setup](#development-environment-setup)
+3. [Development Environment Setup](#development-environment-setup)
+4. [Architecture Overview](#architecture)
+
+## Introduction
+Edit your images in Discord with Image Bot! This bot provides a cross-platform way to apply a lot of effects, filters, and other transformations to your images. 
+
+While [there](https://top.gg/bot/1012419466031792188) are [many](https://discord.bots.gg/bots/780570413767983122) other [image](https://discordbotlist.com/bots/assyst) editing [Discord]((https://discord.bots.gg/bots/732654582089515009)) bots on the market, Image Bot is free, open-source, and feature-rich. It's easy to deploy and to expand upon. 
 
 ## Available Commands
-All commands are prefixed with $. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
+All commands are prefixed with `$`. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
 ### Meta Commands
 1. `$help`
 Provides a list of commands and arguments.
@@ -57,41 +64,44 @@ Draws a line from point (x1, y1) to (x2, y2) with the given width of the saved c
 Draws a rectangle bounded by the points (x1, y1), (x2, y2) of the saved color.
 
 ## Development Environment Setup
+1. Follow the instructions [here](https://discord.com/developers/docs/getting-started) to set up your bot and get your bot token. Don't share this with anyone!
 
-1. Install Python 3.8 or higher
+2. Install Python 3.8 or higher
 
-2. Clone the repository
+3. Clone the repository
     ```
     git clone https://github.com/CS222-UIUC/Team0-ImageBot
     ```
-3. Set up your virtual environment
+4. Set up your virtual environment
     ```
     cd Team0-ImageBot
     python3 -m venv bot-env
     ```
     Activate the virtual environment.
 
-    (MacOS/Linux)
-    ```
-    source bot-env/bin/activate
-    ```
-    (Windows)
-    ```
-    bot-env\Scripts\activate.bat
-    ```
+    * (MacOS/Linux)
+        ```
+        source bot-env/bin/activate
+        ```
+    * (Windows)
+        ```
+        bot-env\Scripts\activate.bat
+        ```
 
-4. Install necessary stuff
+5. Install necessary stuff
     ```
     pip install -r requirements.txt
     ```
     Be sure to update this file if you install a new library.
 
-5. For testing locally, create a file called `BOT_TOKEN.txt`, and paste the bot token into there. 
+6. For testing locally, create a file called `BOT_TOKEN.txt`, and paste your bot's token into there. 
 
     If hosting on Heroku, then go to the app's `Settings > Config Vars`. Add one with the key `"IMAGE_BOT_TOKEN"`, and put the bot token into the value.
 
-6. To run the bot locally, run
+7. To run the bot locally, run
     ```
     python3 main.py
     ```
     and `Ctrl+C` to stop.
+
+## Architecture
