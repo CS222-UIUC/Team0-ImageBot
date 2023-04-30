@@ -105,3 +105,33 @@ Draws a rectangle bounded by the points (x1, y1), (x2, y2) of the saved color.
     and `Ctrl+C` to stop.
 
 ## Architecture
+```mermaid
+flowchart LR
+    id1(Discord Chat) -->|command|id2(Command Handler);
+    id2-->|image|id1;
+    id2---id3(Transformation Handler);
+    id2---id4(Color Handler);
+    id2---id5(Effects Handler);
+    id2---id6(GIF Handler);
+    id2---id7(Drawing Handler);
+    click id1 "https://github.com/CS222-UIUC/Team0-ImageBot#discord-chat"
+    click id2 "https://github.com/CS222-UIUC/Team0-ImageBot#command-handler"
+    click id3 "https://github.com/CS222-UIUC/Team0-ImageBot#transformation-handler"
+    click id4 "https://github.com/CS222-UIUC/Team0-ImageBot#color-handler"
+    click id5 "https://github.com/CS222-UIUC/Team0-ImageBot#effects-handler"
+    click id6 "https://github.com/CS222-UIUC/Team0-ImageBot#gif-handler"
+    click id7 "https://github.com/CS222-UIUC/Team0-ImageBot#drawing-handler"
+```
+### Discord Chat
+
+### Command Handler
+
+### Transformation Handler
+
+### Color Handler
+
+### Effects Handler
+
+### GIF Handler
+
+### Drawing Handler
