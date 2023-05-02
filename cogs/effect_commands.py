@@ -17,7 +17,7 @@ class EffectCog(commands.Cog):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {Triangulate().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(error)
+            await ctx.send(f"Usage: {Triangulate().usage}")
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
@@ -37,7 +37,7 @@ class EffectCog(commands.Cog):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {TriAnimation().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(error)
+            await ctx.send(f"Usage: {TriAnimation().usage}")
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
@@ -55,7 +55,7 @@ class EffectCog(commands.Cog):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {Voronoi().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(error)
+            await ctx.send(f"Usage: {Voronoi().usage}")
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
@@ -74,7 +74,7 @@ class EffectCog(commands.Cog):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {VoronoiAnimation().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(error)
+            await ctx.send(f"Usage: {VoronoiAnimation().usage}")
         elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
