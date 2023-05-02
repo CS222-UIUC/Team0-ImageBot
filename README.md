@@ -46,6 +46,15 @@ Returns a grayscale version of the given image.
 Returns a triangulated version of an image.
     * `points` - integer in range [1, 16383) specifying how many samples from the image to take
 2. `$tri_animate [url]`
+Creates a gif with a triangulation effect.
+3. `$voronoi [points] [seed] [url]`
+Filters the image with a voronoi diagram
+    * `points` - an integer in the range [4, 32768]
+    * `seed` - seed for random number generation
+4. `$voronoi_animate [seed] [url]`
+Creates a gif with a voronoi effect
+    * `seed` - seed for random number generation
+
 Returns a gif with a triangulation effect.
 ### GIFs
 1. `$create_gif [\"image_url1 image_url2 ... image_urln\"] [cover_image_url]`
