@@ -29,7 +29,9 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 Compresses a JPEG by the specified rate between 0 and 1, inclusive. Image file size decreases as the compression rate goes down. Beware that information is lost during compression.
 6. `$edge_detect [url]`
 Converts the image to a black and white image, where edges detected in the original image are colored white.
-7. `$sharpen [level] [url]`
+7. `$to_ascii [color] [url]`
+Tranforms the image to an ascii art. If color is 0, the ascii art is monochromatic. If color is 1, it is chromatic.
+8. `$sharpen [level] [url]`
 Sharpens the image by the given level from 1 to 4. The higher the level is, the sharper the image becomes.
 ### Color Filters
 1. `$grayscale [url]`
@@ -41,9 +43,9 @@ Returns a triangulated version of an image.
 2. `$tri_animate [url]`
 Returns a gif with a triangulation effect.
 ### GIFs
-1. `$create_gif [\"image_url1 image_url2 ... image_urln\"] [cover_image_url]`
+1. `$create_gif ["image_url1 image_url2 ... image_urln"] [cover_image_url]`
 Creates a gif from input images and the cover image. If input images have different dimensions, all are resized to the dimension of cover_image.
-2. `$append_gif [\"image_url1 image_url2 ... image_urln\"] [gif_url]`
+2. `$append_gif ["image_url1 image_url2 ... image_urln"] [gif_url]`
 Appends input images to the given gif. If input images have different dimensions, all are resized to the dimension of the gif. Appending images can be gifs.
 
 ### Image Drawing

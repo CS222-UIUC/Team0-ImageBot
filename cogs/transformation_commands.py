@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect, Compress, Sharpen
+from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect, Compress, Ascii, Sharpen
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
 from image_utils import process_command, InvalidURL
@@ -140,6 +140,25 @@ class TransformationCog(commands.Cog):
                 await ctx.send(f"Too many arguments. Usage: {Sharpen().usage}")
         elif isinstance(error, BadArgument):
             await ctx.send("Level is an integer from 1 to 4")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+
+    """Ascii Art"""
+    @commands.command(name="to_ascii", description="transform image to ascii art")
+    async def image_to_ascii(self, ctx, color, *args):
+        await process_command(ctx, Ascii(), *args, color=color, cntx=ctx)
+
+    @image_to_ascii.error
+    async def to_ascii_error_handler(self, ctx, error):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {Ascii().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Ascii().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send("Color takes either 0 or 1")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
