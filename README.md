@@ -29,6 +29,8 @@ If direction is 1, then the image is flipped vertically such that the top is at 
 Compresses a JPEG by the specified rate between 0 and 1, inclusive. Image file size decreases as the compression rate goes down. Beware that information is lost during compression.
 6. `$edge_detect [url]`
 Converts the image to a black and white image, where edges detected in the original image are colored white.
+7. `$to_ascii [color] [url]`
+Tranforms the image to an ascii art. If color is 0, the ascii art is monochromatic. If color is 1, it is chromatic.
 ### Color Filters
 1. `$grayscale [url]`
 Returns a grayscale version of the given image.
