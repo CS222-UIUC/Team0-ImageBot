@@ -35,26 +35,7 @@ async def on_ready():
 """
 Basic func example, does nothing to the image
 """
-class Echo(Command):
-    def __init__(self) -> None:
-        super().__init__("$echo [image link/uploaded image]")
-    async def command(self, img_path):
-        return img_path
 
-@bot.command(name="echo", description="Echos back the image")
-async def echo(ctx, *args):
-    await process_command(ctx, Echo(), *args)
-
-@echo.error
-async def echo_error_handler(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument, ):
-        await ctx.send("Please send a URL linking to your image")
-    elif isinstance(error, commands.TooManyArguments):
-        await ctx.send("Too many arguments!")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("URL was invalid, make sure to copy the image link")
-    else:
-        await ctx.send(f"Something unexpected happened: {error}")
 
 if __name__ == "__main__":
     # heroku - get token from environment variable
@@ -69,7 +50,7 @@ if __name__ == "__main__":
 
     spoof_human()
 
-    cogs = ["color", "transformation", "effect", "draw", "gif"]
+    cogs = ["color", "transformation", "effect", "draw", "gif", "misc"]
 
     for cog in cogs:
         asyncio.run(bot.load_extension(f"cogs.{cog}_commands"))

@@ -4,6 +4,8 @@ import os
 import numpy as np
 from discord.ext import commands
 from command import Command
+from PIL import Image
+from PIL.ExifTags import TAGS
 
 
 curr_color = (0, 0, 0)
@@ -124,5 +126,8 @@ class SampleColor(Command):
         blank_image[:,:] = curr_color
         cv2.imwrite(img_path, blank_image)
         return img_path
+
+
+
 
 
