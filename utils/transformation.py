@@ -178,17 +178,9 @@ class Compress(Command):
             im.close()
             image_utils.delete_file(img_path)
             raise BadArgument
-        if (new_file_name == None):
-            qlt = int(rate*DEFAULT_QUALITY)
-        else:
-            qlt = int(rate*100)
-
-        if (new_file_name == None):
-            im.save(img_path, quality=qlt)
-            new_file_size = get_file_units(os.stat(img_path).st_size)
-        else:
-            im.save(new_file_name, quality=qlt)
-            new_file_size = get_file_units(os.stat(new_file_name).st_size)
+        qlt = int(rate*DEFAULT_QUALITY)
+        im.save(new_file_name, quality=qlt)
+        new_file_size = get_file_units(os.stat(new_file_name).st_size)
         old_file_size = get_file_units(old_file_size)
         return (old_file_size, new_file_size, new_file_name)
 
