@@ -235,8 +235,8 @@ Creating GIF command and appending GIF command both check for valid image links 
 `PIL` is used to dealing with GIFs.
 
 Files:
-* `cogs/gif_commands.py` - Listens for transformation commands, and handles errors
-* `utils/gif.py` - Contains classes for applying transformation to images
+* `cogs/gif_commands.py` - Listens for gif commands, and handles errors
+* `utils/gif.py` - Contains classes for interacting with gifs
 
 Contributors:
 * [Jason](https://github.com/Jason717717)
