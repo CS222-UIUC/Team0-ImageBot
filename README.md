@@ -190,7 +190,27 @@ Each handler has two files associated with it, located in the following director
 Files:
 * `command.py`
 #### Transformation Handler
+Transformation commands include scaling, resizing, rotation, flip, compression, edge detection, sharpening, and ascii art.
 
+Scaling, resizing, rotation, and flip commands simply use corresponding built-in functions from Pillow after checking for valid inputs.
+
+Compression command first converts PNGs to JPEGs if images are PNGs and then uses the `quality` parameter in `PIL`'s `Image.save` function to compress JPEGs in terms of the given compression rates.
+
+Edge detection command first converts images to grayscale. It then creates a specific 5 by 5 kernel by calling `PIL`'s `ImageFilter.Kernel` and applies a high-pass filter using this kernel to input images through `Image.filter` to enhance the edges of objects in images.
+
+Sharpening applies the `PIL`'s built-in sharpening filter `ImageFilter.SHARPEN` repeatedly according to input sharpening levels.
+
+Ascii command is achieved by [ascii-magic](https://github.com/LeandroBarone/python-ascii_magic). It outputs chromatic or monochromatic ascii art as html files by using `to_html_file`.
+
+`PIL` is heavily used in this part to achieve various image transformations.
+
+Files:
+* `cogs/transformation_commands.py` - Listens for transformation commands, and handles errors
+* `utils/transformation.py` - Contains classes for applying transformation to images
+
+Contributors:
+* [Jason](https://github.com/Jason717717)
+* [Daniel](https://github.com/dsding2)
 #### Color Handler
 
 #### Effects Handler
@@ -210,5 +230,14 @@ Contributors:
 * [Brendan](https://github.com/BrendanParmer)
 
 #### GIF Handler
+Creating GIF command and appending GIF command both check for valid image links or attachments first. Input images then will be resized to the dimensions of the given cover images or GIFs by calling `PIL`'s `Image.resize`. To save the given list of images as GIFs, `save_all`, `append_images`, `duration`, and `loop`, these parameters are used in `Image.save` function.
 
+`PIL` is used to dealing with GIFs.
+
+Files:
+* `cogs/gif_commands.py` - Listens for transformation commands, and handles errors
+* `utils/gif.py` - Contains classes for applying transformation to images
+
+Contributors:
+* [Jason](https://github.com/Jason717717)
 #### Drawing Handler
