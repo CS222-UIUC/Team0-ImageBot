@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect, Compress
+from utils.transformation import ImageScaling, ImageResizing, ImageRotation, ImageFlip, EdgeDetect, Compress, Ascii, Sharpen
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
 from image_utils import process_command, InvalidURL
@@ -64,7 +64,6 @@ class TransformationCog(commands.Cog):
                 await ctx.send(error.__cause__)
             elif isinstance(error.__cause__, TooManyArguments):
                 await ctx.send(f"Too many arguments. Usage: {ImageRotation().usage}")
-
         elif isinstance(error, BadArgument):
             await ctx.send("Degree needs to be a real number")
         else:
@@ -96,10 +95,15 @@ class TransformationCog(commands.Cog):
 
     @compress_image.error
     async def compress_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.TooManyArguments):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {Compress().usage}")
-        elif isinstance(error, commands.BadArgument):
-            await ctx.send(f"Usage: {Compress().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Compress().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send("Rate is a real number between 0 and 1, inclusive")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
@@ -112,6 +116,49 @@ class TransformationCog(commands.Cog):
     async def edge_detect_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {EdgeDetect().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {EdgeDetect().usage}")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+
+    """Sharpening"""
+    @commands.command(name="sharpen", description="sharpen image")
+    async def sharpen_image(self, ctx, level, *args):
+        await process_command(ctx, Sharpen(), *args, level=level)
+    
+    @sharpen_image.error
+    async def sharpen_error_handler(self, ctx, error):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {Sharpen().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Sharpen().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send("Level is an integer from 1 to 4")
+        else:
+            await ctx.send(f"Something unexpected happened: {error}")
+
+    """Ascii Art"""
+    @commands.command(name="to_ascii", description="transform image to ascii art")
+    async def image_to_ascii(self, ctx, color, *args):
+        await process_command(ctx, Ascii(), *args, color=color, cntx=ctx)
+
+    @image_to_ascii.error
+    async def to_ascii_error_handler(self, ctx, error):
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
+            await ctx.send(f"Usage: {Ascii().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {Ascii().usage}")
+        elif isinstance(error, BadArgument):
+            await ctx.send("Color takes either 0 or 1")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 

@@ -1,4 +1,5 @@
-from PIL import ImageOps, Image, ImageFilter, ImageSequence
+from PIL import ImageOps, Image, ImageFilter
+from ascii_magic import AsciiArt
 from discord.ext.commands import BadArgument
 from discord.ext.commands import UserInputError
 from fractions import Fraction
@@ -11,6 +12,7 @@ FILE_SIZE_LIMIT = 1 << 26 # 64 MB
 DISPLAY_FILE_SIZE_LIMIT = 1 << 23 # 8 MB
 DEFAULT_QUALITY = 75
 FILE_SIZE_UNITS = {0 : 'B', 1 : 'KB', 2 : 'MB'}
+SHARPEN_LEVELS = [f"{i}" for i in range(1, 5)]
 
 def get_file_units(size_in_bytes):
     size = float(size_in_bytes)
@@ -64,7 +66,7 @@ class ImageScaling(Command):
 
 class ImageResizing(Command):
     def __init__(self):
-        super().__init__("$resize [width] [height] [image link/uploaded image].\n\t-Width and height are in pixels")
+        super().__init__("$resize [width] [height] [image link/uploaded image]\n\t-width and height are in pixels")
     
     async def command(self, img_path, width, height, cntx):
         display = await self.image_resizing(img_path, width, height)
@@ -103,7 +105,7 @@ class ImageResizing(Command):
         
 class ImageRotation(Command):
     def __init__(self):
-        super().__init__("$rotate [degree] [image link/uploaded image].\n\t-degree: number specifying number of degrees counterclockwise to rotate")
+        super().__init__("$rotate [degree] [image link/uploaded image]\n\t-degree: number specifying number of degrees counterclockwise to rotate")
 
     async def command(self, img_path, degree):
         try:
@@ -119,7 +121,7 @@ class ImageRotation(Command):
 
 class ImageFlip(Command):
     def __init__(self):
-        super().__init__("$flip [direction] [image link/uploaded image].\n\t-direction: 0 flips left to right, 1 flips up to down")
+        super().__init__("$flip [direction] [image link/uploaded image]\n\t-direction: 0 flips left to right, 1 flips up to down")
 
     async def command(self, img_path, direction):
         try:
@@ -152,7 +154,7 @@ class EdgeDetect(Command):
 
 class Compress(Command):
     def __init__(self):
-        super().__init__("$compress [rate] [url]\n-Rate is a real number between 0 and 1, inclusive")
+        super().__init__("$compress [rate] [image link/uploaded image]\n\t-rate is a real number between 0 and 1, inclusive")
 
     async def command(self, img_path, rate, cntx):
         old_file_size, new_file_size, new_file_name = await self.image_compression(img_path, rate)
@@ -190,3 +192,35 @@ class Compress(Command):
         old_file_size = get_file_units(old_file_size)
         return (old_file_size, new_file_size, new_file_name)
 
+class Sharpen(Command):
+    def __init__(self):
+        super().__init__("$sharpen [level] [image link/uploaded image]\n\t-level is an integer from 1 to 4")
+
+    async def command(self, img_path, level):
+        im = Image.open(img_path)
+        if level not in SHARPEN_LEVELS:
+            raise BadArgument
+        level = int(level)
+        for i in range(0, level):
+            im = im.filter(ImageFilter.SHARPEN)
+        im.save(img_path)
+        return img_path
+
+class Ascii(Command):
+    def __init__(self):
+        super().__init__("$to_ascii [color] [image link/uploaded image]\n\t-color: 0 indicates ascii art is monochromatic, 1 indicates full color")
+
+    async def command(self, img_path, color, cntx):
+        new_file_path = await self.to_ascii(img_path, color)
+        await cntx.send("To see the ascii art, please download the html file and open it in a browser")
+        return new_file_path
+
+    async def to_ascii(self, img_path, color):
+        if color != '0' and color != '1':
+            raise BadArgument
+        color = True if color == '0' else False
+        im = AsciiArt.from_image(img_path)
+        filename, __ = os.path.splitext(img_path)
+        new_file_path = f"{filename}.html"
+        im.to_html_file(new_file_path, columns=200, monochrome=color)
+        return new_file_path
