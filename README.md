@@ -11,7 +11,7 @@
 
 ## Available Commands
 All commands are prefixed with $. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
-### Meta Commands
+### Misc Commands
 1. `$help`
 Provides a list of commands and arguments.
 2. `$echo`

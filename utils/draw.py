@@ -6,7 +6,6 @@ from discord.ext import commands
 from command import Command
 from PIL import Image
 from PIL.ExifTags import TAGS
-import hashlib
 
 
 curr_color = (0, 0, 0)
@@ -127,33 +126,6 @@ class SampleColor(Command):
         blank_image[:,:] = curr_color
         cv2.imwrite(img_path, blank_image)
         return img_path
-
-class ImageInfo(Command):
-    def __init__(self):
-        super().__init__("$info [url]")
-    
-    async def command(self, img_path, c):
-        await ImageInfo.image_info(img_path, c)
-        return img_path
-    
-    async def image_info(img_path, ctx):
-        img = Image.open(img_path)
-        await ctx.send("Dimensions: " + str(img.height) + " x " + str(img.width))
-
-        with open(img_path, "rb") as f:
-            img_hash = hashlib.md5()
-            while chunk := f.read(8192):
-                img_hash.update(chunk)
-        await ctx.send("Hash: " + str(img_hash.hexdigest()))
-
-        exifdata = img.getexif()
-        
-        if (len(exifdata) == 0):
-            await ctx.send("No metadata found")
-        for tagid in exifdata:
-            tagname = TAGS.get(tagid, tagid)
-            value = exifdata.get(tagid)
-            await ctx.send(str(tagname) + ": " + str(value))
 
 
 

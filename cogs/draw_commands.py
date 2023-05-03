@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.draw import DrawLine, DrawRect, SampleColor, PickColor, ImageInfo
+from utils.draw import DrawLine, DrawRect, SampleColor, PickColor
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
 from image_utils import process_command, InvalidURL
@@ -84,21 +84,6 @@ class DrawCog(commands.Cog):
         else:
             await ctx.send(f"Something unexpected happened: {error}")
 
-    @commands.command(name="info", description="Prints the data associated with the image")
-    async def image_info(self, ctx, *args):
-        await process_command(ctx, ImageInfo(), *args, c=ctx)
-    
-    @image_info.error
-    async def image_info_error_handler(self, ctx, error):
-        if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
-            await ctx.send(f"Usage: {ImageInfo().usage}")
-        elif isinstance(error, CommandInvokeError):
-            if isinstance(error.__cause__, InvalidURL):
-                await ctx.send(error.__cause__)
-            elif isinstance(error.__cause__, TooManyArguments):
-                await ctx.send(f"Too many arguments. Usage: {SampleColor().usage}")
-        else:
-            await ctx.send(f"Something unexpected happened: {error}")
 
 async def setup(bot):
     await bot.add_cog(DrawCog(bot))
