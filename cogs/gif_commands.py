@@ -1,8 +1,9 @@
 from discord.ext import commands
 from utils.gif import GifCreate, GifAppend
 from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument
+from discord.ext.commands import MissingRequiredArgument, TooManyArguments, BadArgument, CommandInvokeError
 
-from image_utils import process_command
+from image_utils import process_command, InvalidURL
 
 class GIFCog(commands.Cog):
     def __init__(self, bot):
@@ -17,8 +18,13 @@ class GIFCog(commands.Cog):
     async def create_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {GifCreate().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {GifCreate().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(f"Usage: {GifCreate().usage}")
+            await ctx.send("Make sure all urls are valid and image urls are separated by spaces and in double quotation")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
@@ -31,8 +37,13 @@ class GIFCog(commands.Cog):
     async def append_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {GifAppend().usage}")
+        elif isinstance(error, CommandInvokeError):
+            if isinstance(error.__cause__, InvalidURL):
+                await ctx.send(error.__cause__)
+            elif isinstance(error.__cause__, TooManyArguments):
+                await ctx.send(f"Too many arguments. Usage: {GifAppend().usage}")
         elif isinstance(error, BadArgument):
-            await ctx.send(f"Usage: {GifAppend().usage}")
+            await ctx.send("Make sure all urls are valid and image urls are separated by spaces and in double quotation")
         else:
             await ctx.send(f"Something unexpected happened: {error}")
     
