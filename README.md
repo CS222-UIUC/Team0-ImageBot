@@ -10,6 +10,15 @@
     5. [GIFs](#gifs)
 3. [Development Environment Setup](#development-environment-setup)
 4. [Architecture Overview](#architecture)
+    1. [Discord Chat](#discord-chat)
+    2. [Command Handler](#command-handler)
+    3. [Handlers](#handlers)
+        1. [Misc Handler](#misc-handler)
+        2. [Transformation Handler](#transformation-handler)
+        3. [Color Handler](#color-handler)
+        4. [Effects Handler](#effects-handler)
+        5. [GIF Handler](#gif-handler)
+        6. [Drawing Handler](#drawing-handler)
 
 ## Introduction
 Edit your images in Discord with Image Bot! This bot provides a cross-platform way to apply a lot of effects, filters, and other transformations to your images. 
@@ -17,8 +26,8 @@ Edit your images in Discord with Image Bot! This bot provides a cross-platform w
 While [there](https://top.gg/bot/1012419466031792188) are [many](https://discord.bots.gg/bots/780570413767983122) other [image](https://discordbotlist.com/bots/assyst) editing [Discord]((https://discord.bots.gg/bots/732654582089515009)) bots on the market, Image Bot is free, open-source, and feature-rich. It's easy to deploy and to expand upon. 
 
 ## Available Commands
-### Misc Commands
 All commands are prefixed with `$`. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
+### Misc Commands
 1. `$help`
 Provides a list of commands and arguments.
 2. `$echo`
@@ -59,7 +68,6 @@ Filters the image with a voronoi diagram
 Creates a gif with a voronoi effect
     * `seed` - seed for random number generation
 
-Returns a gif with a triangulation effect.
 ### GIFs
 1. `$create_gif ["image_url1 image_url2 ... image_urln"] [cover_image_url]`
 Creates a gif from input images and the cover image. If input images have different dimensions, all are resized to the dimension of cover_image.
@@ -124,6 +132,7 @@ For this project, we chose to use Python. The language is both simple and famili
 flowchart LR
     id1(Discord Chat) -->|command|id2(Command Handler);
     id2-->|image|id1;
+    id2---id8(Misc Handler);
     id2---id3(Transformation Handler);
     id2---id4(Color Handler);
     id2---id5(Effects Handler);
@@ -136,6 +145,7 @@ flowchart LR
     click id5 "https://github.com/CS222-UIUC/Team0-ImageBot#effects-handler"
     click id6 "https://github.com/CS222-UIUC/Team0-ImageBot#gif-handler"
     click id7 "https://github.com/CS222-UIUC/Team0-ImageBot#drawing-handler"
+    click id8 "https://github.com/CS222-UIUC/Team0-ImageBot#misc-handler"
 ```
 ### Discord Chat
 Users can interact with the bot by entering commands, as described in the [Available Commands](#available-commands) section. After processing it, the bot will then send back the image or GIF.
@@ -191,6 +201,10 @@ Each handler has two files associated with it, located in the following director
 
 Files:
 * `command.py`
+
+#### Misc Handler
+[TODO]
+
 #### Transformation Handler
 Transformation commands include scaling, resizing, rotation, flip, compression, edge detection, sharpening, and ascii art.
 
@@ -213,7 +227,9 @@ Files:
 Contributors:
 * [Jason](https://github.com/Jason717717)
 * [Daniel](https://github.com/dsding2)
+
 #### Color Handler
+[TODO]
 
 #### Effects Handler
 The triangulation effect is created using the [triangler](https://github.com/tdh8316/triangler) library by [Donghyeok Tak](https://github.com/tdh8316). 
@@ -242,4 +258,6 @@ Files:
 
 Contributors:
 * [Jason](https://github.com/Jason717717)
+
 #### Drawing Handler
+[TODO]
