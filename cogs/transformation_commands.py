@@ -38,7 +38,7 @@ class TransformationCog(commands.Cog):
     async def resize_error_handler(self, ctx, error):
         if isinstance(error, (MissingRequiredArgument, TooManyArguments)):
             await ctx.send(f"Usage: {ImageResizing().usage}")
-        elif isinstance(error.__cause__, InvalidURL):
+        elif isinstance(error, CommandInvokeError):
             if isinstance(error.__cause__, InvalidURL):
                 await ctx.send(error.__cause__)
             elif isinstance(error.__cause__, TooManyArguments):
