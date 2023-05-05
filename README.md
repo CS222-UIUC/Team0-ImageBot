@@ -25,6 +25,10 @@ Edit your images in Discord with Image Bot! This bot provides a cross-platform w
 
 While [there](https://top.gg/bot/1012419466031792188) are [many](https://discord.bots.gg/bots/780570413767983122) other [image](https://discordbotlist.com/bots/assyst) editing [Discord]((https://discord.bots.gg/bots/732654582089515009)) bots on the market, Image Bot is free, open-source, and feature-rich. It's easy to deploy and to expand upon. 
 
+Many existing image bots seek to provide highly complex functionality with simple inputs, such as allowing the creation of a fake Donald Trump tweet with a single message. This convenience comes at the cost of flexibility, which our bot seeks to address by providing many simple image adjustments that are often overlooked by other bots.
+
+Additionally, this bot serves as a useful demonstration delivery method for our more complex image transformations, such as the triangulate method.
+
 ## Available Commands
 All commands are prefixed with `$`. Additionally, note that the url argument is optional. By default, if no url is provided, then the most recently sent url in the channel is used.
 ### Misc Commands
@@ -203,7 +207,14 @@ Files:
 * `command.py`
 
 #### Misc Handler
-[TODO]
+`PIL` is used to read the EXIF metadata, and the `hashlib` library's `md5` function handles hashing.
+
+Files:
+* `cogs/misc_commands.py` - Listens for misc commands, and handles errors
+* `utils/misc.py` - Contains classes for interacting with miscellaneous commands
+
+Contributors:
+* [Daniel](https://github.com/Jason717717)
 
 #### Transformation Handler
 Transformation commands include scaling, resizing, rotation, flip, compression, edge detection, sharpening, and ascii art.
@@ -269,4 +280,13 @@ Contributors:
 * [Jason](https://github.com/Jason717717)
 
 #### Drawing Handler
-[TODO]
+All of the drawing effects are handled through `cv2`, which opens, draws, and saves the image.
+
+The sample color command picks the most dominant color based on k-means clustering, also provided by `cv2`.
+
+Files:
+* `cogs/draw_commands.py` - Listens for draw commands, and handles errors
+* `utils/draw.py` - Contains classes for interacting with drawing
+
+Contributors:
+* [Daniel](https://github.com/Jason717717)
