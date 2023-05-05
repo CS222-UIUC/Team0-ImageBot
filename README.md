@@ -215,3 +215,6 @@ Contributors:
 #### GIF Handler
 
 #### Drawing Handler
+All of the drawing effects are handled through cv2, which opens, draws, and saves the image.
+
+The sample color command picked the most dominant color based on k-means clustering, also provided by cv2.
