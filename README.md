@@ -214,7 +214,7 @@ Files:
 * `utils/misc.py` - Contains classes for interacting with miscellaneous commands
 
 Contributors:
-* [Daniel](https://github.com/Jason717717)
+* [Daniel](https://github.com/dsding2)
 
 #### Transformation Handler
 Transformation commands include scaling, resizing, rotation, flip, compression, edge detection, sharpening, and ascii art.
@@ -289,4 +289,4 @@ Files:
 * `utils/draw.py` - Contains classes for interacting with drawing
 
 Contributors:
-* [Daniel](https://github.com/Jason717717)
+* [Daniel](https://github.com/dsding2)
