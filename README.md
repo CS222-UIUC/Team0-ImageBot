@@ -229,7 +229,16 @@ Contributors:
 * [Daniel](https://github.com/dsding2)
 
 #### Color Handler
-[TODO]
+Color commands are grayscale and hue.
+
+Both of these operations are done using the opencv-python library, which includes many functions useful for working with images. For grayscale, this is as simple as reading in the file with a flag that ignores colors, resulting in a grayscale image. For the hue command, the image is split into its HSV (hue, saturation, value) channels, the hue value is altered by the specified amount, and the channels are recombined into a new, resulting image.
+
+Files:
+* `cogs/color_commands.py` - Listens for color commands, and handles errors
+* `utils/color.py` - Contains classes for applying color operations to images
+
+Contributors:
+* [Adrian](https://github.com/Ulico)
 
 #### Effects Handler
 The triangulation effect is created using the [triangler](https://github.com/tdh8316/triangler) library by [Donghyeok Tak](https://github.com/tdh8316). 
